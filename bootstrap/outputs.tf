@@ -26,39 +26,23 @@ output "google_artifact_registry_repository_project_region" {
     sensitive = true
 }
 
+
+
 output "dev_project_id" {
-  value       = var.dev_project_id
+  value       = local.bootstrap_config.dev_project_id
   description = "The ID of the Dev project"
 }
-
-output "test_project_id" {
-  value       = var.test_project_id
-  description = "The ID of the Test project"
-}
-
-output "uat_project_id" {
-  value       = var.uat_project_id
-  description = "The ID of the UAT project"
-}
-
-
 
 output "dev_project_number" {
   value       = data.google_project.dev_project.number
   description = "The Number of the DEV project"
 }
 
-
-output "test_project_number" {
-  value       = data.google_project.test_project.number
-  description = "The Number of the TEST project"
+output "cicd_project_id" {
+  value       = local.bootstrap_config.cicd_project_id
+  description = "The ID of the cicd project"
 }
 
-
-output "uat_project_number" {
-  value       = data.google_project.uat_project.number
-  description = "The Number of the UAT project"
-}
 
 # output "Github_Pool_id_cicd" {
 #   value = google_iam_workload_identity_pool.github_pool_cicd.workload_identity_pool_id

@@ -1,0 +1,15 @@
+# CICD Project ID
+cicd_project_id: 
+
+# DEV Project ID
+dev_project_id: 
+
+# Default Region
+default_region:
+
+# Name of the Artifact Registry
+image_repo_name:
+
+# Name of the Repo for the IaC
+# Format "Owner/Repo Name"
+cicd_attribute_repository:
