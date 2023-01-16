@@ -104,49 +104,5 @@ output "github_service_account_dev" {
 }
 
 
-# output "Github_Pool_id_test" {
-#   value = google_iam_workload_identity_pool.github_pool_test.workload_identity_pool_id
-# }
-
-# output "Github_Pool_full_id_test" {
-#   value = google_iam_workload_identity_pool.github_pool_test.id
-# }
-
-# output "provider_id_test" {
-#   value = google_iam_workload_identity_pool_provider.github_provider_test.workload_identity_pool_provider_id
-# }
-
-output "provider_full_id_test" {
-  value       = google_iam_workload_identity_pool_provider.github_provider_test.name
-  description = "Github Actions Provider for TEST App deployment"
-}
-
-output "github_service_account_test" {
-  value       = google_service_account.sa_github_test.email
-  description = "Github Actions Servive Account for test App deployment"
-}
-
-# output "Github_Pool_id_uat" {
-#   value = google_iam_workload_identity_pool.github_pool_uat.workload_identity_pool_id
-# }
-
-# output "Github_Pool_full_id_uat" {
-#   value = google_iam_workload_identity_pool.github_pool_uat.id
-# }
-
-# output "provider_id_uat" {
-#   value = google_iam_workload_identity_pool_provider.github_provider_uat.workload_identity_pool_provider_id
-# }
-
-output "provider_full_id_uat" {
-  value       = google_iam_workload_identity_pool_provider.github_provider_uat.id
-  description = "Github Actions Provider for UAT App deployment"
-}
-
-output "github_service_account_uat" {
-  value       = google_service_account.sa_github_uat.email
-  description = "Github Actions Servive Account for UAT App deployment"
-}
-
 
 
