@@ -128,10 +128,6 @@ As a minimum a CICD (central host for the artifact registry and state files) and
 
 * DEV project - _This is the developement project_
 
-* TEST project - _This is the testing project_
-
-* UAT project - _This is the UAT project, in this scenorio it is being treated as main_
-
 <p>&nbsp;</p> 
 
 ### Deploy Cloud Run
