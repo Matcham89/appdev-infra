@@ -8,9 +8,9 @@ on:
      - uat
      
 env:
-   WORKLOAD_IDENTITY_PROVIDER: projects/663726659755/locations/global/workloadIdentityPools/github-action-pool-cicd/providers/github-actions-provider
-   SERVICE_ACCOUNT: sa-gha-createlift-cicd@createlift-cicd.iam.gserviceaccount.com
-   STATE_BUCKET: bkt-createlift-cicd-tfstates
+   WORKLOAD_IDENTITY_PROVIDER: 
+   SERVICE_ACCOUNT: 
+   STATE_BUCKET: 
 
 
 jobs:
@@ -28,15 +28,15 @@ jobs:
       - name: Set Variables DEV
         if: github.base_ref == 'main'
         run: |
-            echo PROJECT_ID=createlift-dev1 >> $GITHUB_ENV 
-            echo PROJECT_NUMBER=391620017450 >> $GITHUB_ENV 
+            echo PROJECT_ID=dev >> $GITHUB_ENV 
+            echo PROJECT_NUMBER=dev >> $GITHUB_ENV 
             echo BUCKET_PREFIX=dev >> $GITHUB_ENV
      
       - name: Set Variables TEST
         if: github.base_ref == 'test'
         run: |
-            echo PROJECT_ID=createlift-test >> $GITHUB_ENV
-            echo PROJECT_NUMBER=915788252495 >> $GITHUB_ENV
+            echo PROJECT_ID=testt >> $GITHUB_ENV
+            echo PROJECT_NUMBER=test >> $GITHUB_ENV
             echo BUCKET_PREFIX=test >> $GITHUB_ENV
       
       - name: Set Variables UAT
