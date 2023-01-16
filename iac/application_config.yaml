@@ -1,0 +1,22 @@
+
+cr_webapp: "cr-mcm-createlift-web-app"
+cr_nielsen: "cr-mcm-createlift-nielsen-data"
+cr_yougov: "cr-mcm-createlift-yougov-data"
+cr_did: "cr-mcm-createlift-did"
+
+runtime_nielsen: "python39"
+runtime_webapp: "python39"
+runtime_yougov: "python39"
+runtime_did: "python39"
+
+entrypoint_nielsen: "value"
+entrypoint_webapp: "value"
+entrypoint_yougov: "value"
+entrypoint_did: "value"
+
+
+webapp_image: "webapp-ingest-image"
+yougov_image: "yougov-ingest-image:latest"
+nielsen_image: "nielsen-ingest-image:latest"
+did_image: "did-ingest-image"
+#

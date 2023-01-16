@@ -1,0 +1,31 @@
+steps:
+  # Entrypoint, timeout and environment variables
+  - name: 'gcr.io/cloud-builders/gsutil'
+    args: ['cp', '$_ARTIFACTBUCKET/bootstrap/outputs.json', './iac/']
+
+  - name: 'hashicorp/terraform:1.2.6'
+    id: "iac destroy"
+    timeout: 1200s
+    entrypoint: 'sh'
+    args:
+    - '-c'
+    - |
+      x=`pwd`
+      cd iac
+      export TF_VAR_project_id=${_PROJECT}
+      export TF_VAR_project_number=${_PROJECTNUMBER}
+      terraform init -reconfigure -backend-config="bucket=${_STATEBUCKET}" 
+
+      if [ ${_TYPE}  == "apply" ]
+      then
+        echo "Running Terraform Destroy Apply"
+        terraform destroy -lock=false -no-color -auto-approve 
+      else
+        echo "Running Terraform Destroy Plan"
+        terraform plan -destroy -lock=false 
+      fi
+
+      cd $x
+      
+timeout: 3600s  
+logsBucket: $_LOGBUCKET
