@@ -8,7 +8,7 @@
 
 resource "google_service_account" "sa_cr" {
   project      = var.project_id
-  account_id   = "sa-cr"
+  account_id   = "sa-cloud-run"
   display_name = "SA for the service on Cloud Run"
 }
 
