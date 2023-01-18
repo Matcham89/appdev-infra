@@ -1,15 +1,15 @@
 # CICD Project ID
-cicd_project_id: 
+cicd_project_id: app-cicd-infra-cm
 
 # DEV Project ID
-dev_project_id: 
+dev_project_id: app-dev-infra-cm
 
 # Default Region
-default_region:
+default_region: europe-west2
 
 # Name of the Artifact Registry
-image_repo_name:
+image_repo_name: ar-app-cicd-infra-cm
 
 # Name of the Repo for the IaC
 # Format "Owner/Repo Name"
-cicd_attribute_repository:
+cicd_attribute_repository: Matcham89/appdev-infra

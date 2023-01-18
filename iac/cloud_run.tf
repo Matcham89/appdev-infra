@@ -30,7 +30,7 @@ resource "google_secret_manager_secret_iam_member" "sa_cr_un" {
   project   = google_secret_manager_secret.username.project
   secret_id = google_secret_manager_secret.username.secret_id
   role      = "roles/secretmanager.secretAccessor"
-  member    = google_service_account.sa_cr_yougov.member
+  member    = google_service_account.sa_cr.member
 }
 
 

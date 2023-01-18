@@ -5,10 +5,10 @@
 # #######################################################
 
 
-# data "google_cloud_run_service" "cr_webapp" {
-#   project = var.project_id
+# data "google_cloud_run_service" "cr_data" {
+#   project  = var.project_id
 #   location = local.default_region
-#   name = "cr-mcm-createlift-web-app"
+#   name     = "cr-hello-world"
 
 # }
 
@@ -19,7 +19,7 @@ resource "google_compute_region_network_endpoint_group" "serverless_neg" {
   project               = var.project_id
   region                = local.default_region
   cloud_run {
-    service = "cr-mcm-createlift-web-app"
+    service = data.google_cloud_run_service.cr_data.name
   }
 }
 
