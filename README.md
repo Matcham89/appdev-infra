@@ -113,6 +113,10 @@ image_repo_name:
 # Name of the Repo for the IaC
 # Format "Owner/Repo Name"
 cicd_attribute_repository:
+
+# Name of the Repo for the Application
+# Format "Owner/Repo Name"
+app_attribute_repository: 
 ```
 
 <p>&nbsp;</p>
