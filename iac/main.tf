@@ -135,7 +135,7 @@ resource "google_service_account_iam_member" "actas_cloud_scheduler_sa" {
 data "google_cloud_run_service" "cr_data" {
   project  = var.project_id
   location = local.default_region
-  name     = "cr-hello-world"
+  name     = "appdev-application-test"
 
 }
 
