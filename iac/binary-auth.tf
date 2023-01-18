@@ -8,7 +8,7 @@ data "google_artifact_registry_repository" "cicd_repo" {
 resource "google_binary_authorization_policy" "policy" {
   project = var.project_id
   admission_whitelist_patterns {
-    name_pattern = "europe-west2-docker.pkg.dev/${data.google_artifact_registry_repository.cicd_repo.cicd_project_id}/${data.google_artifact_registry_repository.cicd_repo.artifact_repo_id}/*"
+    name_pattern = "europe-west2-docker.pkg.dev/${data.google_artifact_registry_repository.cicd_repo.cicd_project_id}/${data.google_artifact_registry_repository.cicd_repo.repository_id}/*"
   }
 
   default_admission_rule {
