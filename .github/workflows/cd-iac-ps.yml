@@ -8,7 +8,7 @@ on:
      
 env:
    WORKLOAD_IDENTITY_PROVIDER: projects/691719132237/locations/global/workloadIdentityPools/github-action-pool-cicd/providers/github-actions-provider
-   SERVICE_ACCOUNT: sa-gha-app-dev-infra-cm@app-dev-infra-cm.iam.gserviceaccount.com
+   SERVICE_ACCOUNT: sa-gha-app-cicd-infra-cm@app-cicd-infra-cm.iam.gserviceaccount.com
    STATE_BUCKET: bkt-app-cicd-tfstate
 
 jobs:
