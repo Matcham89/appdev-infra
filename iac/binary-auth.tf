@@ -70,5 +70,5 @@ resource "google_kms_crypto_key" "asymmetric-sign-key" {
 resource "google_kms_key_ring" "keyring" {
   project  = var.project_id
   name     = "binauth-keyring-${var.project_id}"
-  location = "europe-west2"
+  location = local.default_region
 }
