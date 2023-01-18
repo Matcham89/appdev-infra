@@ -1,7 +1,7 @@
 
 resource "google_service_account" "sa_github_cicd" {
-  project      = local.bootstrap_config.cicd_project_id
-  account_id   = "sa-gha-${local.bootstrap_config.cicd_project_id}"
+  project      = local.cicd_project_id
+  account_id   = "sa-gha-${local.cicd_project_id}"
   display_name = "SA for the service Github actions"
 }
 
@@ -10,7 +10,7 @@ resource "google_service_account" "sa_github_cicd" {
 #################################################
 
 resource "google_project_iam_member" "github_actions_access_cicd" {
-  project = local.bootstrap_config.cicd_project_id
+  project = local.cicd_project_id
   member  = google_service_account.sa_github_cicd.member
   role    = each.value
   for_each = toset([
@@ -32,7 +32,7 @@ resource "google_project_iam_member" "github_actions_access_cicd" {
 #################################################
 
 resource "google_project_iam_member" "github_actions_access_cicd_dev" {
-  project = local.bootstrap_config.dev_project_id
+  project = local.dev_project_id
   member  = google_service_account.sa_github_cicd.member
   role    = each.value
   for_each = toset([
@@ -58,7 +58,7 @@ resource "google_project_iam_member" "github_actions_access_cicd_dev" {
 
 
 resource "google_iam_workload_identity_pool" "github_pool_cicd" {
-  project                   = local.bootstrap_config.cicd_project_id
+  project                   = local.cicd_project_id
   workload_identity_pool_id = "github-action-pool-cicd"
   display_name              = "Github actions authentication"
   description               = "Identity pool for automated iac delievery"
@@ -66,7 +66,7 @@ resource "google_iam_workload_identity_pool" "github_pool_cicd" {
 }
 
 resource "google_iam_workload_identity_pool_provider" "github_provider_cicd" {
-  project                            = local.bootstrap_config.cicd_project_id
+  project                            = local.cicd_project_id
   workload_identity_pool_id          = google_iam_workload_identity_pool.github_pool_cicd.workload_identity_pool_id
   workload_identity_pool_provider_id = "github-actions-provider"
   display_name                       = "Github actions provider"

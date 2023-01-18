@@ -87,6 +87,9 @@ output "github_service_account_dev" {
   description = "Github Actions Servive Account for DEV App deployment"
 }
 
+output "github_repo_binding" {
+  value = google_service_account_iam_binding.github_account_binding_cicd.members
+}
 
 
 

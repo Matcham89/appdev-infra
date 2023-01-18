@@ -3,7 +3,7 @@
 #################################################
 
 resource "google_service_account" "sa_github_dev" {
-  project      = local.bootstrap_config.dev_project_id
+  project      = local.dev_project_id
   account_id   = "sa-gha-${local.dev_project_id}"
   display_name = "SA for the service Github actions"
 }
