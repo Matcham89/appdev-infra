@@ -91,6 +91,6 @@ resource "google_service_account_iam_binding" "github_account_binding_cicd" {
 
   members = [
     "serviceAccount:${google_service_account.sa_github_cicd.email}",
-    "principalSet://iam.googleapis.com/${google_iam_workload_identity_pool.github_pool_cicd.name}/attribute.repository/${local.bootstrap_config.cicd_attribute_repository}",
+    "principalSet://iam.googleapis.com/${google_iam_workload_identity_pool.github_pool_cicd.name}/attribute.repository/${local.cicd_attribute_repository}",
   ]
 }

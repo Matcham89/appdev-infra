@@ -1,17 +1,15 @@
-name: 'Plan Terraform IaC'
+name: 'Apply Terraform IaC'
 
 on:
-  pull_request:
+  push:
      branches:
      - main
      - test
-     - uat
      
 env:
-   WORKLOAD_IDENTITY_PROVIDER: 
-   SERVICE_ACCOUNT: 
-   STATE_BUCKET: 
-
+   WORKLOAD_IDENTITY_PROVIDER: projects/691719132237/locations/global/workloadIdentityPools/github-action-pool-cicd/providers/github-actions-provider
+   SERVICE_ACCOUNT: sa-gha-app-dev-infra-cm@app-dev-infra-cm.iam.gserviceaccount.com
+   STATE_BUCKET: bkt-app-cicd-tfstate
 
 jobs:
   Terraform-IaC:
@@ -26,31 +24,32 @@ jobs:
         uses: actions/checkout@v2
       
       - name: Set Variables DEV
-        if: github.base_ref == 'main'
+        if: github.ref_name == 'main'
         run: |
-            echo PROJECT_ID=dev >> $GITHUB_ENV 
-            echo PROJECT_NUMBER=dev >> $GITHUB_ENV 
+            echo PROJECT_ID=app-dev-infra-cm >> $GITHUB_ENV 
+            echo PROJECT_NUMBER=63373401292 >> $GITHUB_ENV 
             echo BUCKET_PREFIX=dev >> $GITHUB_ENV
      
       - name: Set Variables TEST
-        if: github.base_ref == 'test'
+        if: github.ref_name == 'test'
         run: |
-            echo PROJECT_ID=testt >> $GITHUB_ENV
+            echo PROJECT_ID=test >> $GITHUB_ENV
             echo PROJECT_NUMBER=test >> $GITHUB_ENV
             echo BUCKET_PREFIX=test >> $GITHUB_ENV
       
       - name: Set Variables UAT
-        if: github.base_ref == 'uat'
+        if: github.ref_name == 'uat'
         run: |
             echo PROJECT_ID=createlift-uat >> $GITHUB_ENV
             echo PROJECT_NUMBER=uat >> $GITHUB_ENV
             echo BUCKET_PREFIX=uat >> $GITHUB_ENV
 
+
       - name: Google Auth
         id: auth
         uses: 'google-github-actions/auth@v0'
         with:
-          workload_identity_provider: '${{ env.WORKLOAD_IDENTITY_PROVIDER }}'
+          workload_identity_provider: '${{ env.WORKLOAD_IDENTITY_PROVIDER }}' 
           service_account: '${{ env.SERVICE_ACCOUNT }}' 
 
 
@@ -65,24 +64,18 @@ jobs:
       - name: 'Use gcloud CLI'
         run: 'gcloud info'
 
-      - name: 'Check Terraform Formatting'
-        working-directory: ./iac
-        shell: bash
-        run: |-
-          terraform fmt -recursive -check
-
- 
+      # Run Terraform init
       - name: Terraform Init ${{ env.PROJECT_ID }}
         working-directory: ./iac
         run: |
           terraform init -backend-config="bucket=${{ env.STATE_BUCKET }}" -backend-config="prefix=${{ env.BUCKET_PREFIX }}"
-
-
-      - name: Terraform Plan ${{ env.PROJECT_ID }}
+    
+      # On push to main, build or change infrastructure according to Terraform configuration files
+      - name: Terraform Apply ${{ env.PROJECT_ID }}
         working-directory: ./iac
         env: 
           TF_VAR_project_id: ${{ env.PROJECT_ID }}
           TF_VAR_project_number: ${{ env.PROJECT_NUMBER }}
-        run: |
-          terraform plan -lock=false
+        run: 
+          terraform apply -lock=false -no-color -auto-approve || exit 1
       
