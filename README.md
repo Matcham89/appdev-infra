@@ -133,7 +133,7 @@ After connecting to Google Cloud, run the below code
 
 ```bash
 export PROJECT=<NAME OF PROJECT>
-gcloud run deploy appdev-application-test --image us-docker.pkg.dev/cloudrun/container/hello --no-allow-unauthenticated --region europe-west2 --project $PROJECT
+gcloud run deploy appdev-application-test --image us-docker.pkg.dev/cloudrun/container/hello --allow-unauthenticated --ingress internal-and-cloud-load-balancing --region europe-west2 --project $PROJECT
 ```
 
 
