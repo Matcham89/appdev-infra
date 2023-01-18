@@ -52,23 +52,6 @@ The deployed resources include:
 
 <p>&nbsp;</p>
 
-### Hosted Services Controls
-
-<p>&nbsp;</p>
-
-The platform hosts the following executable’s:
-
-* Web Portal (running on Cloud Run)
-
-* Data Ingest (running on Cloud Run)
-
-* Back-end API service (running on Cloud Run)
-
-Cloud Run resources will use Google Cloud IAM for internal traffic. The Web Portal resource will sit behind a Network End Group using Cloud Armor for protection, the ingress traffic will be restricted to GB only. This can be amended by updating the Terraform.
-
-The Cloud Run resources will be managed and deployed via the Application CD pipeline.
-
-<p>&nbsp;</p>
 
 ### Authentication
 
@@ -108,6 +91,30 @@ A Google Cloud Storage bucket must exist in the Google Cloud Console and be defi
 
 As a minimum a CICD (central host for the artifact registry and state files) and a DEV project need to be defined.
 
+Populate `bootstrap_config.yaml` with the required details
+
+* CICD project - _This will host the artifact registry and appplications images. It will also hold the state files_
+
+* DEV project - _This is the developement project_
+
+```bash
+# CICD Project ID
+cicd_project_id: 
+
+# DEV Project ID
+dev_project_id: 
+
+# Default Region
+default_region:
+
+# Name of the Artifact Registry
+image_repo_name:
+
+# Name of the Repo for the IaC
+# Format "Owner/Repo Name"
+cicd_attribute_repository:
+```
+
 <p>&nbsp;</p>
 
 ### Connect to google cloud
@@ -117,22 +124,10 @@ As a minimum a CICD (central host for the artifact registry and state files) and
 
 <p>&nbsp;</p>
 
-### Define project variables
-
-
-
-`mcm-createlift-infra/bootstrap/variables`
-
-
-* CICD project - _This will host the artifact registry and appplications images. It will also hold the state files_
-
-* DEV project - _This is the developement project_
-
-<p>&nbsp;</p> 
 
 ### Deploy Cloud Run
 
-For the IaC to deploy Cloud Run resources must exsist in the project you are going to deploy to
+For the IaC to deploy, Cloud Run resources must exsist in the project you are going to deploy to
 
 After connecting to Google Cloud, run the below code
 
@@ -184,6 +179,8 @@ For authentication into Google Cloud the GitHub actions workflow uses `google-gi
 
 ### Trigger a GitHub Action
 
+`main` = Development environment.
+
 In order for the CD workflow to deploy the IaC, a feature branch must be created off of `main`.
 
 The feature branch then requires a `Pull Request` to be merged into `main`, this will produce a `Terraform Plan` in the GitHub actions.
@@ -209,8 +206,8 @@ The flow of promotion
 
 | Root  | Action  | Target |
 | :------------ |:------:| -----:|
-| test | Pull Request        | uat |
-| test | Merge        | uat |
+| test | Pull Request        | prod |
+| test | Merge        | prod |
 
  <p>&nbsp;</p>
 
