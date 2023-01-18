@@ -30,6 +30,11 @@ output "KEY_NAME" {
   value = google_kms_crypto_key.asymmetric-sign-key.name
 }
 
+output "KEYRING_LOCATION" {
+  value = google_kms_key_ring.keyring.location
+}
+
+
 output "KEY_VERSION" {
   value = data.google_kms_crypto_key_version.version.version
 }
