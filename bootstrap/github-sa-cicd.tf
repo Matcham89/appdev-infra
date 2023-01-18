@@ -1,3 +1,6 @@
+#################################################
+######### CD IAC WIF Account CICD ENV ###########
+#################################################
 
 resource "google_service_account" "sa_github_cicd" {
   project      = local.cicd_project_id
@@ -5,9 +8,7 @@ resource "google_service_account" "sa_github_cicd" {
   display_name = "SA for the service Github actions"
 }
 
-#################################################
-######### CD IAC WIF Account CICD ENV ###########
-#################################################
+
 
 resource "google_project_iam_member" "github_actions_access_cicd" {
   project = local.cicd_project_id
@@ -24,7 +25,7 @@ resource "google_project_iam_member" "github_actions_access_cicd" {
     "roles/iam.serviceAccountKeyAdmin",
     "roles/iam.serviceAccountUser",
     "roles/storage.objectAdmin",
-    "roles/iam.serviceAccountTokenCreator"
+
   ])
 }
 

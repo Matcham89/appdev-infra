@@ -8,5 +8,6 @@ locals {
   default_region = local.bootstrap_config.default_region
   image_repo_name = local.bootstrap_config.image_repo_name
   cicd_attribute_repository = local.bootstrap_config.cicd_attribute_repository
+  app_attribute_repository = local.bootstrap_config.app_attribute_repository
 }
 

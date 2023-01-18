@@ -13,3 +13,7 @@ image_repo_name: ar-app-cicd-infra-cm
 # Name of the Repo for the IaC
 # Format "Owner/Repo Name"
 cicd_attribute_repository: Matcham89/appdev-infra
+
+# Name of the Repo for the Application
+# Format "Owner/Repo Name"
+app_attribute_repository: Matcham89/appdev-application
