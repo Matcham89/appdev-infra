@@ -85,7 +85,7 @@ Each application requires credentials in order to run successfully. Secret resou
 
 ## New Branch
 
-Create a new branch for your deployment eg. initial commit.
+Create a new branch for your deployment eg. initial-deployment.
 
 This will be required in order to trigger the Terraform Plan and Apply at a later stage without causing GitHub action errors.
 
@@ -196,6 +196,8 @@ This is due to `data` dependencies defined in the Terraform code.
 
 Run the below command to create a Cloud Run resource with some basic options. (The Image Name must match the name in the IAC Terraform code `main.tf` line 140)
 
+<p>&nbsp;</p>
+
 ```bash
 export PROJECT=<NAME OF PROJECT>
 gcloud run deploy appdev-application-test --image us-docker.pkg.dev/cloudrun/container/hello --allow-unauthenticated --ingress internal-and-cloud-load-balancing --region europe-west2 --project $PROJECT
@@ -204,23 +206,62 @@ gcloud run deploy appdev-application-test --image us-docker.pkg.dev/cloudrun/con
 <p>&nbsp;</p>
 
 
-## Github Actions Workflow
+## IaC deployment with GitHub Actions
 
-### Authentication
+### GitHub Secretes
 
 Once the bootstrap is complete, the following details need to be updated to GitHub secrets for both IAC CD worflow's and for the Application workflow in `appdev-application`:
 
-* SERVICE_ACCOUNT
+<p>&nbsp;</p>
 
-* WORKLOAD_IDENTITY_PROVIDER
 
-* PROJECT_NUMBER
+#### IAC CD worflow
 
-* PROJECT_ID
+* SERVICE_ACCOUNT  _(sa-gha-appdev-cm-cicd@appdev-cm-cicd.iam.gserviceaccount.com)_
 
-* BUCKET_PREFIX
+* WORKLOAD_IDENTITY_PROVIDER _(projects/37532543929/locations/global/workloadIdentityPools/github-action-pool-cicd/providers/github-actions-provider)_
+
+* BUCKET_PREFIX _(dev)_
+
+* DEV_PROJECT_NUMBER _(37532543929)_
+
+* DEV_PROJECT_ID _(appdev-cm-dev)_
+
+<p>&nbsp;</p>
+
+
+#### Application CD worflow
+
+* BUCKET_PREFIX _(dev)_
+
+* DEV_SERVICE_ACCOUNT  _(sa-gha-appdev-cm-dev@appdev-cm-dev.iam.gserviceaccount.com)_
+
+* DEV_WORKLOAD_IDENTITY_PROVIDER _(projects/37532543929/locations/global/workloadIdentityPools/github-action-pool-dev/providers/github-actions-provider)_
+
+* DEV_PROJECT_NUMBER _(37532543929)_
+
+* DEV_PROJECT_ID _(appdev-cm-dev)_
+
+<p>&nbsp;</p>
+
 
 The details can be found in the outputs from the bootstrap.
+
+<p>&nbsp;</p>
+
+Each workflow references the required GitHub Secrets, so the variable as the same format as the workflow:
+
+DEV_SERVICE_ACCOUNT = ${{ secrets.DEV_SERVICE_ACCOUNT }}
+
+<p>&nbsp;</p>
+
+Once all the secrets are populated, create a Pull Request into `main` to trigger the Terraform Plan.
+
+_make sure you have removed the .terraform and state lock from `bootstrap` before commiting your changes.
+
+When that has been successful, approve the merge to trigger the Terraform Apply.
+
+<p>&nbsp;</p>
 
 For authentication into Google Cloud the GitHub actions workflow uses `google-github-actions/auth@v0`
 
