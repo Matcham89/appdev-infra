@@ -4,7 +4,7 @@ module "slo_application" {
   source = "terraform-google-modules/slo/google//modules/slo-native"
   config = {
     project_id        = var.project_id
-    service           = google_cloud_run_service.cr_data.service_id
+    service           = data.google_cloud_run_service.cr_data.service_id
     slo_id            = "cr-application-slo"
     display_name      = "90% of Cloud Run default service HTTP response latencies < 500ms over a day"
     goal              = 0.9
