@@ -199,7 +199,7 @@ Run the below command to create a Cloud Run resource with some basic options. (T
 <p>&nbsp;</p>
 
 ```bash
-export PROJECT=<NAME OF PROJECT>
+export PROJECT=<NAME OF DEV PROJECT>
 gcloud run deploy appdev-application-test --image us-docker.pkg.dev/cloudrun/container/hello --allow-unauthenticated --ingress internal-and-cloud-load-balancing --region europe-west2 --project $PROJECT
 ```
 
@@ -257,7 +257,7 @@ DEV_SERVICE_ACCOUNT = ${{ secrets.DEV_SERVICE_ACCOUNT }}
 
 Once all the secrets are populated, create a Pull Request into `main` to trigger the Terraform Plan.
 
-_make sure you have removed the .terraform and state lock from `bootstrap` before commiting your changes.
+_make sure you have removed the .terraform and state lock from `bootstrap` before commiting your changes_
 
 When that has been successful, approve the merge to trigger the Terraform Apply.
 
