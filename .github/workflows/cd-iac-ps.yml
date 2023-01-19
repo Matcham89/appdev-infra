@@ -3,7 +3,7 @@ name: 'Apply Terraform IaC'
 on:
   push:
      branches:
-     - main
+     - master
      
 env:
    WORKLOAD_IDENTITY_PROVIDER: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
@@ -23,7 +23,7 @@ jobs:
         uses: actions/checkout@v2
       
       - name: Set Variables DEV
-        if: github.ref_name == 'main'
+        if: github.ref_name == 'master'
         run: |
             echo PROJECT_ID=${{ secrets.DEV_PROJECT_ID }} >> $GITHUB_ENV 
             echo PROJECT_NUMBER=${{ secrets.DEV_PROJECT_NUMBER }} >> $GITHUB_ENV 

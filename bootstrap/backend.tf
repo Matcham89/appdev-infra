@@ -1,6 +1,6 @@
 terraform {
   backend "gcs" {
-    bucket = ""
+    bucket = "bkt-my-project-54162-cicd"
     prefix = "bootstrap"
   }
 }
