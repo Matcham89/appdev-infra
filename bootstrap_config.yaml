@@ -1,14 +1,14 @@
 # CICD Project ID
-cicd_project_id: 
+cicd_project_id: terraform-app-cicd
 
 # DEV Project ID
-dev_project_id: 
+dev_project_id: terraform-app-dev
 
 # Default Region
 default_region: europe-west2
 
 # Name of the Artifact Registry
-image_repo_name: ar-app-cicd-infra-cm
+image_repo_name: ar-terraform-app-cicd
 
 # Name of the Repo for the IaC
 # Format "Owner/Repo Name"

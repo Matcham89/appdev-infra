@@ -3,8 +3,7 @@ name: 'Apply Terraform IaC'
 on:
   push:
      branches:
-     - main
-     - test
+     - master
      
 env:
    WORKLOAD_IDENTITY_PROVIDER: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
