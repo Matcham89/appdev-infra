@@ -16,9 +16,6 @@ resource "google_binary_authorization_policy" "policy" {
     enforcement_mode        = "ENFORCED_BLOCK_AND_AUDIT_LOG"
     require_attestations_by = [google_binary_authorization_attestor.attestor.name]
   }
-  depends_on = [
-    google_project_service.enable_project_apis
-  ]
 }
 
 ##### Binary Authorization Attestor Kms
@@ -36,17 +33,11 @@ resource "google_binary_authorization_attestor" "attestor" {
       }
     }
   }
-  depends_on = [
-    google_project_service.enable_project_apis
-  ]
 }
 
 data "google_kms_crypto_key_version" "version" {
   crypto_key = google_kms_crypto_key.asymmetric-sign-key.id
 
-  depends_on = [
-    google_project_service.enable_project_apis
-  ]
 }
 
 resource "google_container_analysis_note" "note" {
@@ -57,9 +48,6 @@ resource "google_container_analysis_note" "note" {
       human_readable_name = "Attestor Note"
     }
   }
-  depends_on = [
-    google_project_service.enable_project_apis
-  ]
 }
 
 
@@ -78,17 +66,11 @@ resource "google_kms_crypto_key" "asymmetric-sign-key" {
       version_template[0].algorithm
     ]
   }
-  depends_on = [
-    google_project_service.enable_project_apis
-  ]
+
 }
 
 resource "google_kms_key_ring" "keyring" {
   project  = var.project_id
   name     = "binauth-keyring-${var.project_id}"
   location = local.default_region
-
-  depends_on = [
-    google_project_service.enable_project_apis
-  ]
 }
