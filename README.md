@@ -1,6 +1,8 @@
 # Overview
 
 The following Terraform code will deploy multiple resources to support the hosting and delivery of applications.
+ 
+This is designed to work in conjuction with appdev-application repo https://github.com/Matcham89/appdev-application
 
 It will also create the required service accounts to run a CI/CD pipeline for the Application and the Infrastructure via GitHub Actions
 
