@@ -131,16 +131,6 @@ app_attribute_repository:
 <p>&nbsp;</p>
 
 
-### Deploy Cloud Run
-
-For the IaC to deploy, Cloud Run resources must exsist in the project you are going to deploy to
-
-After connecting to Google Cloud, run the below code
-
-```bash
-export PROJECT=<NAME OF PROJECT>
-gcloud run deploy appdev-application-test --image us-docker.pkg.dev/cloudrun/container/hello --allow-unauthenticated --ingress internal-and-cloud-load-balancing --region europe-west2 --project $PROJECT
-```
 
 
 ### Bootstrap
@@ -154,6 +144,22 @@ terraform apply ./.plan
 ```
 
 <p>&nbsp;</p>
+
+
+
+### Deploy Cloud Run
+
+For the IaC to deploy, Cloud Run resources must exsist in the project you are going to deploy to
+
+After connecting to Google Cloud, run the below code
+
+```bash
+export PROJECT=<NAME OF PROJECT>
+gcloud run deploy appdev-application-test --image us-docker.pkg.dev/cloudrun/container/hello --allow-unauthenticated --ingress internal-and-cloud-load-balancing --region europe-west2 --project $PROJECT
+```
+
+<p>&nbsp;</p>
+
 
 ## Github Actions Workflow
 
