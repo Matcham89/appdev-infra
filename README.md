@@ -89,7 +89,34 @@ Each application requires credentials in order to run successfully. Secret resou
 
 Projects need to be created in the Google Cloud Console
 
-A Google Cloud Storage bucket must exist in the Google Cloud Console and be defined in the Terraform `backend.tf`
+A Google Cloud Storage bucket must exist in the Google Cloud Console and will need to be defined in the Terraform `backend.tf` for the BOOTSTRAP _AND_ the remote states for the IAC
+
+
+appdev-infra/bootstrap/backend.tf
+```bash
+terraform {
+  backend "gcs" {
+    bucket = ""
+    prefix = "bootstrap"
+  }
+}
+```
+
+<p>&nbsp;</p>
+
+appdev-infra/iac/remote_states.tf
+```bash
+data "terraform_remote_state" "bootstrap" {
+  backend = "gcs"
+  config = {
+    bucket = ""
+    prefix = "bootstrap"
+  }
+}
+
+```
+
+<p>&nbsp;</p>
 
 As a minimum a CICD (central host for the artifact registry and state files) and a DEV project need to be defined.
 
