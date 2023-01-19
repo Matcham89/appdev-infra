@@ -319,9 +319,6 @@ resource "google_bigquery_table" "CSV" {
   ]    
 EOF
   deletion_protection = false # important
-  depends_on = [
-    google_bigquery_table.CSV
-  ]
 }
 
 
@@ -357,7 +354,8 @@ resource "google_bigquery_table" "query_table" {
 
   deletion_protection = false # important
   depends_on = [
-    google_bigquery_dataset.dataset
+    google_bigquery_dataset.dataset,
+    google_bigquery_table.CSV
   ]
 }
 
