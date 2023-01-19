@@ -83,6 +83,12 @@ Each application requires credentials in order to run successfully. Secret resou
 
 # Deployment
 
+## New Branch
+
+Create a new branch for your deployment eg. initial commit.
+
+This will be required in order to trigger the Terraform Plan and Apply at a later stage without causing GitHub action errors.
+
 
 
 ### Prerequisites
