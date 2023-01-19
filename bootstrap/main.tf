@@ -13,6 +13,7 @@ resource "google_project_service" "enable_artifact_apis" {
     "iam.googleapis.com",
     "binaryauthorization.googleapis.com",
     "containerscanning.googleapis.com",
+    "cloudresourcemanager.googleapis.com",
   ])
   service                    = each.value
   disable_dependent_services = true
@@ -24,7 +25,8 @@ resource "google_project_service" "enable_artifact_apis" {
 resource "google_project_service" "enable_artifact_apis_dev" {
   project = local.bootstrap_config.dev_project_id
   for_each = toset([
-    "run.googleapis.com"
+    "run.googleapis.com",
+    "cloudresourcemanager.googleapis.com",
   ])
   service                    = each.value
   disable_dependent_services = true
