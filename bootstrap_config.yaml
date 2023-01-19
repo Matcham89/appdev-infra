@@ -1,8 +1,8 @@
 # CICD Project ID
-cicd_project_id: 
+cicd_project_id: appdev-cm-cicd
 
 # DEV Project ID
-dev_project_id: 
+dev_project_id: appdev-cm-dev
 
 # Default Region
 default_region: europe-west2

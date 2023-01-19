@@ -1,6 +1,6 @@
 terraform {
   backend "gcs" {
-    bucket = ""
+    bucket = "bkt-appdev-cm-cicd"
     prefix = "bootstrap"
   }
 }
