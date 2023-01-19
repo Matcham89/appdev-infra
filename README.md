@@ -87,9 +87,17 @@ Each application requires credentials in order to run successfully. Secret resou
 
 ### Prerequisites
 
-Projects need to be created in the Google Cloud Console
+Projects need to be created in the Google Cloud Console.
 
-A Google Cloud Storage bucket must exist in the Google Cloud Console and will need to be defined in the Terraform `backend.tf` for the BOOTSTRAP _AND_ the remote states for the IAC
+As a minimum a CICD (central host for the artifact registry and state files) and a DEV project need to be defined.
+
+<p>&nbsp;</p>
+
+Once at least two projects are created, in the CICD project a Google Cloud Storage bucket needs to be created. This bucket will host all of the state files for the Terraform.
+
+Default settings are acceptable for this, however if you would like some HA select object versioning on the bucket options.
+
+The bucket ID will need to be defined in the Terraform `backend.tf` for the BOOTSTRAP _AND_ the `remote_states.tf` for the IAC
 
 
 appdev-infra/bootstrap/backend.tf
@@ -118,7 +126,7 @@ data "terraform_remote_state" "bootstrap" {
 
 <p>&nbsp;</p>
 
-As a minimum a CICD (central host for the artifact registry and state files) and a DEV project need to be defined.
+
 
 Populate `bootstrap_config.yaml` with the required details
 
@@ -176,9 +184,11 @@ terraform apply ./.plan
 
 ### Deploy Cloud Run
 
-For the IaC to deploy, Cloud Run resources must exsist in the project you are going to deploy to
+For the IaC to deploy, Cloud Run resources must exsist in the project you are going to deploy to.
 
-After connecting to Google Cloud, run the below code
+This is due to `data` dependencies defined in the Terraform code.
+
+Run the below command to create a Cloud Run resource with some basic options. (The Image Name must match the name in the IAC Terraform code `main.tf` line 140)
 
 ```bash
 export PROJECT=<NAME OF PROJECT>
@@ -192,11 +202,7 @@ gcloud run deploy appdev-application-test --image us-docker.pkg.dev/cloudrun/con
 
 ### Authentication
 
-Once the bootstrap is complete, the following details need to be updated to both CD worflow's for the deployment:
-
-`cd-iac-pr.yml(pullrequest)` 
-
-`cd-iac-ps.yml(merge)`
+Once the bootstrap is complete, the following details need to be updated to GitHub secrets for both IAC CD worflow's and for the Application workflow in `appdev-application`:
 
 * SERVICE_ACCOUNT
 
