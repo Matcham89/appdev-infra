@@ -1,8 +1,8 @@
 # CICD Project ID
-cicd_project_id: my-project-54162-cicd
+cicd_project_id: 
 
 # DEV Project ID
-dev_project_id: my-project-21275-dev
+dev_project_id: 
 
 # Default Region
 default_region: europe-west2
