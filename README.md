@@ -83,13 +83,27 @@ Each application requires credentials in order to run successfully. Secret resou
 
 # Deployment
 
+## New Branch
+
+Create a new branch for your deployment eg. initial-deployment.
+
+This will be required in order to trigger the Terraform Plan and Apply at a later stage without causing GitHub action errors.
+
 
 
 ### Prerequisites
 
-Projects need to be created in the Google Cloud Console
+Projects need to be created in the Google Cloud Console.
 
-A Google Cloud Storage bucket must exist in the Google Cloud Console and will need to be defined in the Terraform `backend.tf` for the BOOTSTRAP _AND_ the remote states for the IAC
+As a minimum a CICD (central host for the artifact registry and state files) and a DEV project need to be defined.
+
+<p>&nbsp;</p>
+
+Once at least two projects are created, in the CICD project a Google Cloud Storage bucket needs to be created. This bucket will host all of the state files for the Terraform.
+
+Default settings are acceptable for this, however if you would like some HA select object versioning on the bucket options.
+
+The bucket ID will need to be defined in the Terraform `backend.tf` for the BOOTSTRAP _AND_ the `remote_states.tf` for the IAC
 
 
 appdev-infra/bootstrap/backend.tf
@@ -118,7 +132,7 @@ data "terraform_remote_state" "bootstrap" {
 
 <p>&nbsp;</p>
 
-As a minimum a CICD (central host for the artifact registry and state files) and a DEV project need to be defined.
+
 
 Populate `bootstrap_config.yaml` with the required details
 
@@ -176,39 +190,78 @@ terraform apply ./.plan
 
 ### Deploy Cloud Run
 
-For the IaC to deploy, Cloud Run resources must exsist in the project you are going to deploy to
+For the IaC to deploy, Cloud Run resources must exsist in the project you are going to deploy to.
 
-After connecting to Google Cloud, run the below code
+This is due to `data` dependencies defined in the Terraform code.
+
+Run the below command to create a Cloud Run resource with some basic options. (The Image Name must match the name in the IAC Terraform code `main.tf` line 140)
+
+<p>&nbsp;</p>
 
 ```bash
-export PROJECT=<NAME OF PROJECT>
+export PROJECT=<NAME OF DEV PROJECT>
 gcloud run deploy appdev-application-test --image us-docker.pkg.dev/cloudrun/container/hello --allow-unauthenticated --ingress internal-and-cloud-load-balancing --region europe-west2 --project $PROJECT
 ```
 
 <p>&nbsp;</p>
 
 
-## Github Actions Workflow
+## IaC deployment with GitHub Actions
 
-### Authentication
+### GitHub Secretes
 
-Once the bootstrap is complete, the following details need to be updated to both CD worflow's for the deployment:
+Once the bootstrap is complete, the following details need to be updated to GitHub secrets for both IAC CD worflow's and for the Application workflow in `appdev-application`:
 
-`cd-iac-pr.yml(pullrequest)` 
+<p>&nbsp;</p>
 
-`cd-iac-ps.yml(merge)`
 
-* SERVICE_ACCOUNT
+#### IAC CD worflow
 
-* WORKLOAD_IDENTITY_PROVIDER
+* SERVICE_ACCOUNT  _(sa-gha-appdev-cm-cicd@appdev-cm-cicd.iam.gserviceaccount.com)_
 
-* PROJECT_NUMBER
+* WORKLOAD_IDENTITY_PROVIDER _(projects/37532543929/locations/global/workloadIdentityPools/github-action-pool-cicd/providers/github-actions-provider)_
 
-* PROJECT_ID
+* BUCKET_PREFIX _(dev)_
 
-* BUCKET_PREFIX
+* DEV_PROJECT_NUMBER _(37532543929)_
+
+* DEV_PROJECT_ID _(appdev-cm-dev)_
+
+<p>&nbsp;</p>
+
+
+#### Application CD worflow
+
+* BUCKET_PREFIX _(dev)_
+
+* DEV_SERVICE_ACCOUNT  _(sa-gha-appdev-cm-dev@appdev-cm-dev.iam.gserviceaccount.com)_
+
+* DEV_WORKLOAD_IDENTITY_PROVIDER _(projects/37532543929/locations/global/workloadIdentityPools/github-action-pool-dev/providers/github-actions-provider)_
+
+* DEV_PROJECT_NUMBER _(37532543929)_
+
+* DEV_PROJECT_ID _(appdev-cm-dev)_
+
+<p>&nbsp;</p>
+
 
 The details can be found in the outputs from the bootstrap.
+
+<p>&nbsp;</p>
+
+Each workflow references the required GitHub Secrets, so the variable as the same format as the workflow:
+
+DEV_SERVICE_ACCOUNT = ${{ secrets.DEV_SERVICE_ACCOUNT }}
+
+<p>&nbsp;</p>
+
+Once all the secrets are populated, create a Pull Request into `main` to trigger the Terraform Plan.
+
+_make sure you have removed the .terraform and state lock from `bootstrap` before commiting your changes_
+
+When that has been successful, approve the merge to trigger the Terraform Apply.
+
+<p>&nbsp;</p>
 
 For authentication into Google Cloud the GitHub actions workflow uses `google-github-actions/auth@v0`
 

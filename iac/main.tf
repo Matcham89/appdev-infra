@@ -4,36 +4,6 @@ data "google_project" "project_id" {
 }
 
 
-# Enable needed services APIs
-resource "google_project_service" "enable_project_apis" {
-  project = var.project_id
-  for_each = toset([
-    "cloudkms.googleapis.com",
-    "compute.googleapis.com",
-    "container.googleapis.com",
-    "iam.googleapis.com",
-    "iap.googleapis.com",
-    "logging.googleapis.com",
-    "monitoring.googleapis.com",
-    "oslogin.googleapis.com",
-    "secretmanager.googleapis.com",
-    "servicenetworking.googleapis.com",
-    "cloudfunctions.googleapis.com",
-    "run.googleapis.com",
-    "cloudbuild.googleapis.com",
-    "cloudscheduler.googleapis.com",
-    "cloudresourcemanager.googleapis.com",
-    "cloudtasks.googleapis.com",
-    "bigquerydatatransfer.googleapis.com",
-    "binaryauthorization.googleapis.com"
-  ])
-  service                    = each.value
-  disable_dependent_services = true
-
-  disable_on_destroy = false
-}
-
-
 
 
 ####################################################
@@ -349,9 +319,6 @@ resource "google_bigquery_table" "CSV" {
   ]    
 EOF
   deletion_protection = false # important
-  depends_on = [
-    google_bigquery_table.CSV
-  ]
 }
 
 
@@ -387,7 +354,8 @@ resource "google_bigquery_table" "query_table" {
 
   deletion_protection = false # important
   depends_on = [
-    google_bigquery_dataset.dataset
+    google_bigquery_dataset.dataset,
+    google_bigquery_table.CSV
   ]
 }
 
