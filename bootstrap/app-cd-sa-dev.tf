@@ -29,7 +29,7 @@ resource "google_project_iam_member" "github_actions_access_dev" {
     "roles/run.developer",
     "roles/iam.serviceAccountUser",
     "roles/iam.serviceAccountTokenCreator"
-    
+
   ])
 }
 

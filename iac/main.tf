@@ -2,6 +2,8 @@
 data "google_project" "project_id" {
   project_id = var.project_id
 }
+
+
 # Enable needed services APIs
 resource "google_project_service" "enable_project_apis" {
   project = var.project_id
