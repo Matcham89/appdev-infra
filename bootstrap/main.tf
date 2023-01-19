@@ -24,7 +24,7 @@ resource "google_project_service" "enable_artifact_apis" {
 resource "google_project_service" "enable_artifact_apis_dev" {
   project = local.bootstrap_config.dev_project_id
   for_each = toset([
-   "run.googleapis.com"
+    "run.googleapis.com"
   ])
   service                    = each.value
   disable_dependent_services = true

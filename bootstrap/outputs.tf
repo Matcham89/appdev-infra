@@ -2,28 +2,28 @@
 output "default_region" {
   value       = local.default_region
   description = "region of the project"
-  sensitive = true
+  sensitive   = true
 }
 
 output "google_artifact_registry_repository" {
-  value = google_artifact_registry_repository.artifact_registry.id
-    sensitive = true
+  value     = google_artifact_registry_repository.artifact_registry.id
+  sensitive = true
 }
 
 output "google_artifact_registry_repository_name" {
-  value = google_artifact_registry_repository.artifact_registry.name
-    sensitive = true
+  value     = google_artifact_registry_repository.artifact_registry.name
+  sensitive = true
 }
 
 output "google_artifact_registry_repository_project_id" {
-  value = google_artifact_registry_repository.artifact_registry.project
-    sensitive = true
+  value     = google_artifact_registry_repository.artifact_registry.project
+  sensitive = true
 }
 
 
 output "google_artifact_registry_repository_project_region" {
-  value = google_artifact_registry_repository.artifact_registry.location
-    sensitive = true
+  value     = google_artifact_registry_repository.artifact_registry.location
+  sensitive = true
 }
 
 
