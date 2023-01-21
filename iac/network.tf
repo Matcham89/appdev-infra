@@ -30,6 +30,12 @@ resource "google_compute_region_network_endpoint_group" "serverless_neg" {
 # ######## Serverless External Load Balancer ############
 # #######################################################
 
+# data "google_compute_ssl_certificate" "createlift-cert" {
+#   project = var.project_id
+#   name    = "application-certificate"
+# }
+
+
 
 resource "google_compute_address" "default" {
   name    = "glb-static-ip-address"
@@ -42,9 +48,11 @@ module "lb-http" {
   project = var.project_id
   name    = "lb-cloud-run-${random_id.suffix.hex}"
 
-  # ssl                             = true                #<<<<<<<<<<<<<<<<<<<<  creates a Google-managed SSL certificate for your domain name,  
-  # managed_ssl_certificate_domains = [""]                #<<<<<<<<<<<<<<<<<<<<  sets it up on HTTPS forwarding rule and creates a HTTP forwarding rule
-  # https_redirect                  = true                #<<<<<<<<<<<<<<<<<<<<  to redirect HTTP traffic to HTTPS.
+  # ssl                  = true
+  # use_ssl_certificates = true
+  # ssl_certificates     = ["${data.google_compute_ssl_certificate.createlift-cert.self_link}"]
+  # https_redirect       = true
+
   address = google_compute_address.default.address
   backends = {
     default = {

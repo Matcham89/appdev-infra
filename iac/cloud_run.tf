@@ -3,7 +3,7 @@
 
 
 ###################################################
-###### Cloud Run yougov Service Account ##########
+###### Cloud Run Service Account ##########
 ###################################################
 
 resource "google_service_account" "sa_cr" {

@@ -1,15 +1,15 @@
 ## Cloud Run Application SLO latency
 
 resource "google_monitoring_service" "cloud_run" {
-  project = var.project_id
-  service_id = "cloud-run-service"
+  project      = var.project_id
+  service_id   = "cloud-run-service"
   display_name = "Cloud Run Service"
 
   basic_service {
-    service_type  = "CLOUD_RUN"
+    service_type = "CLOUD_RUN"
     service_labels = {
       service_name = data.google_cloud_run_service.cr_data.name
-      location = local.default_region 
+      location     = local.default_region
     }
   }
 }
@@ -51,7 +51,7 @@ resource "google_monitoring_slo" "availability_slo" {
 
 resource "google_monitoring_alert_policy" "burn_rate_latency_policy" {
   depends_on   = [google_monitoring_slo.latency_slo]
-  project = var.project_id
+  project      = var.project_id
   display_name = "${data.google_cloud_run_service.cr_data.name}-latency SLO burn rate"
   combiner     = "OR"
   conditions {
@@ -61,7 +61,7 @@ resource "google_monitoring_alert_policy" "burn_rate_latency_policy" {
       duration   = "0s"
       comparison = "COMPARISON_GT"
       aggregations {
-        alignment_period   = "300s"
+        alignment_period     = "300s"
         cross_series_reducer = "REDUCE_NONE"
       }
       threshold_value = 10
@@ -91,7 +91,7 @@ EOT
     mime_type = "text/markdown"
   }
   user_labels = {
-    severity     = "warning"
+    severity = "warning"
 
   }
   #notification_channels = var.notification_channels
