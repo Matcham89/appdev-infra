@@ -2,23 +2,15 @@ output "GOOGLE_CLOUD_PROJECT" {
   value = data.google_project.project_id.project_id
 }
 
-output "BQ_YOUGOV_DATASET" {
-  value = google_bigquery_dataset.dataset.dataset_id
-}
+# output "BQ_DATASET" {
+#   value = google_bigquery_dataset.dataset.dataset_id
+# }
 
-output "BQ_YOUGOV_TABLE" {
-  value = google_bigquery_table.CSV.table_id
-}
+# output "BQ_TABLE" {
+#   value = google_bigquery_table.raw_sheet.table_id
+# }
 
-output "YOUGOV_QUEUE_NAME" {
-  value = google_cloud_tasks_queue.queue.name
-}
-
-output "YOUGOV_USERNAME_SECRET" {
-  value = google_secret_manager_secret.username.secret_id
-}
-
-output "YOUGOV_PASSWORD_SECRET" {
+output "PASSWORD_SECRET" {
   value = google_secret_manager_secret.password.secret_id
 }
 
@@ -33,7 +25,6 @@ output "KEY_NAME" {
 output "KEYRING_LOCATION" {
   value = google_kms_key_ring.keyring.location
 }
-
 
 output "KEY_VERSION" {
   value = data.google_kms_crypto_key_version.version.version
@@ -67,9 +58,10 @@ output "CLOUD_RUN_SA_EMAIL" {
   value = google_service_account.sa_cr.email
 }
 
-output "QUEUE_NAME" {
-  value = google_cloud_tasks_queue.queue.name
-}
+# output "QUEUE_NAME" {
+#   value = google_cloud_tasks_queue.queue.name
+# }
+
 output "TARGET_BUCKET" {
   value = google_storage_bucket.gcs.name
 }

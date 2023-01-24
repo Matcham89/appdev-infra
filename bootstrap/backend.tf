@@ -1,6 +1,6 @@
 terraform {
   backend "gcs" {
-    bucket = ""
+    bucket = "bkt-mlab-ui-cicd-tfstates"
     prefix = "bootstrap"
   }
 }

@@ -72,111 +72,110 @@ resource "google_secret_manager_secret" "sa_terraform_key" {
 ######### Cloud Scheduler Service Account ##########
 ####################################################
 
-resource "google_service_account" "sa_scheduler" {
-  project      = var.project_id
-  account_id   = "sa-scheduler"
-  description  = "Cloud Scheduler service account used to trigger scheduled Cloud Run jobs."
-  display_name = "sa-scheduler"
+# resource "google_service_account" "sa_scheduler" {
+#   project      = var.project_id
+#   account_id   = "sa-scheduler"
+#   description  = "Cloud Scheduler service account used to trigger scheduled Cloud Run jobs."
+#   display_name = "sa-scheduler"
 
-  # Use an explicit depends_on clause to wait until API is enabled
-}
-
-
-# Basic roles required by the Scheduler service
-resource "google_project_iam_member" "scheduler_access" {
-  project = var.project_id
-  member  = google_service_account.sa_scheduler.member
-  role    = "roles/run.invoker"
-}
+#   # Use an explicit depends_on clause to wait until API is enabled
+# }
 
 
-
-# Allow the Terraform SA to 'actAs' the cloud scheduler service account in order to deploy a schedule
-resource "google_service_account_iam_member" "actas_cloud_scheduler_sa" {
-  service_account_id = google_service_account.sa_scheduler.id
-  role               = "roles/iam.serviceAccountUser"
-  member             = "serviceAccount:${google_service_account.sa_terraform.email}"
-}
+# # Basic roles required by the Scheduler service
+# resource "google_project_iam_member" "scheduler_access" {
+#   project = var.project_id
+#   member  = google_service_account.sa_scheduler.member
+#   role    = "roles/run.invoker"
+# }
 
 
 
-####################################################
-############# Cloud Scheduler YouGov ###############
-####################################################
+# # Allow the Terraform SA to 'actAs' the cloud scheduler service account in order to deploy a schedule
+# resource "google_service_account_iam_member" "actas_cloud_scheduler_sa" {
+#   service_account_id = google_service_account.sa_scheduler.id
+#   role               = "roles/iam.serviceAccountUser"
+#   member             = "serviceAccount:${google_service_account.sa_terraform.email}"
+# }
 
-data "google_cloud_run_service" "cr_data" {
-  project  = var.project_id
-  location = local.default_region
-  name     = "appdev-application-test"
-
-}
-
-
-resource "google_cloud_scheduler_job" "cs" {
-  project     = var.project_id
-  region      = local.default_region
-  name        = "data-collection-${random_id.suffix.hex}"
-  description = "Collect data from source"
-  schedule    = "30 7 14,28 * *"
-  time_zone   = "Europe/London"
-  depends_on = [
-    google_service_account.sa_scheduler
-  ]
-
-  retry_config {
-    min_backoff_duration = "5s"
-    max_backoff_duration = "3600s"
-    max_retry_duration   = "10s"
-    max_doublings        = 2
-    retry_count          = 3
-  }
-
-
-  http_target {
-    http_method = "GET"
-    uri         = "${data.google_cloud_run_service.cr_data.status[0].url}/api/trigger/schedule"
-    oidc_token {
-      service_account_email = google_service_account.sa_scheduler.email
-    }
-  }
-}
 
 
 ####################################################
-############### Cloud Tasks Yougov #################
+################# Cloud Scheduler ##################
 ####################################################
 
-resource "random_id" "suffix" {
-  byte_length = 3
-}
+# data "google_cloud_run_service" "cr_data" {
+#   project  = var.project_id
+#   location = local.default_region
+#   name     = "cr-${var.project_id}"
+# }
 
-resource "google_cloud_tasks_queue" "queue" {
-  project  = var.project_id
-  name     = "queue-${random_id.suffix.hex}"
-  location = local.default_region
 
-  rate_limits {
-    max_concurrent_dispatches = 3
-    max_dispatches_per_second = 1
-  }
+# resource "google_cloud_scheduler_job" "cs" {
+#   project     = var.project_id
+#   region      = local.default_region
+#   name        = "data-collection-${random_id.suffix.hex}"
+#   description = "Collect data from source"
+#   schedule    = "30 7 14,28 * *"
+#   time_zone   = "Europe/London"
+#   depends_on = [
+#     google_service_account.sa_scheduler
+#   ]
 
-  retry_config {
-    max_attempts       = 10
-    max_retry_duration = "4s"
-    max_backoff        = "3600s"
-    min_backoff        = "2s"
-    max_doublings      = 8
-  }
-  lifecycle {
-    create_before_destroy = true
-  }
-}
+#   retry_config {
+#     min_backoff_duration = "5s"
+#     max_backoff_duration = "3600s"
+#     max_retry_duration   = "10s"
+#     max_doublings        = 2
+#     retry_count          = 3
+#   }
+
+
+#   http_target {
+#     http_method = "GET"
+#     uri         = "${data.google_cloud_run_service.cr_data.status[0].url}/api/trigger/schedule"
+#     oidc_token {
+#       service_account_email = google_service_account.sa_scheduler.email
+#     }
+#   }
+# }
+
+
+#####################################################
+################## Cloud Tasks  ####################
+####################################################
+
+# resource "random_id" "suffix" {
+#   byte_length = 3
+# }
+
+# resource "google_cloud_tasks_queue" "queue" {
+#   project  = var.project_id
+#   name     = "queue-${random_id.suffix.hex}"
+#   location = local.default_region
+
+#   rate_limits {
+#     max_concurrent_dispatches = 3
+#     max_dispatches_per_second = 1
+#   }
+
+#   retry_config {
+#     max_attempts       = 10
+#     max_retry_duration = "4s"
+#     max_backoff        = "3600s"
+#     min_backoff        = "2s"
+#     max_doublings      = 8
+#   }
+#   lifecycle {
+#     create_before_destroy = true
+#   }
+#}
 
 
 
 
 ###################################################
-################### YouGov GCS  ###################
+###################### GCS ########################
 ###################################################
 
 
@@ -197,185 +196,168 @@ resource "google_storage_bucket_iam_member" "gcs_member" {
 
 
 ###################################################
-############### Big Query  #################
+################### Big Query  ####################
 ###################################################
 
 
 
-resource "google_bigquery_dataset" "dataset" {
-  project       = var.project_id
-  dataset_id    = "raw"
-  friendly_name = "aw"
-  description   = "data set"
-  location      = "EU"
+# resource "google_bigquery_dataset" "dataset" {
+#   project       = var.project_id
+#   dataset_id    = "raw"
+#   friendly_name = "aw"
+#   description   = "data set"
+#   location      = "EU"
 
 
-  labels = {
-    env = ""
-  }
-}
+#   labels = {
+#     env = ""
+#   }
+# }
 
-resource "google_bigquery_table" "CSV" {
-  project    = var.project_id
-  dataset_id = google_bigquery_dataset.dataset.dataset_id
-  table_id   = "raw-sheet"
-
-
-
-  time_partitioning {
-    type = "DAY"
-  }
-
-  labels = {
-    env = "default"
-  }
-
-  schema              = <<EOF
-[
-    {
-        "name": "date",
-        "type": "DATE",
-        "mode": "REQUIRED"
-      },
-      {
-        "name": "region",
-        "type": "STRING",
-        "mode": "REQUIRED"
-      },
-      {
-        "name": "sector_id",
-        "type": "INTEGER",
-        "mode": "REQUIRED"
-      },
-      {
-        "name": "brand_id",
-        "type": "INTEGER",
-        "mode": "REQUIRED"
-      },
-      {
-        "name": "metric",
-        "type": "STRING",
-        "mode": "REQUIRED"
-      },
-      {
-        "name": "sector_label",
-        "type": "STRING",
-        "mode": "NULLABLE",
-        "description": "The descriptive label for the sector_id"
-      },
-      {
-        "name": "brand_label",
-        "type": "STRING",
-        "mode": "NULLABLE",
-        "description": "The descriptive label for the brand_id"
-      },
-      {
-        "name": "ingest_datetime",
-        "type": "DATETIME",
-        "mode": "REQUIRED",
-        "description": "The datetime this record was actually fetched / written to BQ"
-      },
-      {
-        "name": "query",
-        "type": "STRING",
-        "mode": "REQUIRED",
-        "description": "The sub-query that generated this record"
-      },
-      {
-        "name": "volume",
-        "type": "STRING",
-        "mode": "NULLABLE"
-      },
-      {
-        "name": "score",
-        "type": "STRING",
-        "mode": "NULLABLE"
-      },
-      {
-        "name": "positives",
-        "type": "STRING",
-        "mode": "NULLABLE"
-      },
-      {
-        "name": "negatives",
-        "type": "STRING",
-        "mode": "NULLABLE"
-      },
-      {
-        "name": "neutrals",
-        "type": "STRING",
-        "mode": "NULLABLE"
-      },
-      {
-        "name": "positives_neutrals",
-        "type": "STRING",
-        "mode": "NULLABLE"
-      },
-      {
-        "name": "negatives_neutrals",
-        "type": "STRING",
-        "mode": "NULLABLE"
-      }
-  ]    
-EOF
-  deletion_protection = false # important
-}
+# resource "google_bigquery_table" "raw_sheet" {
+#   project    = var.project_id
+#   dataset_id = google_bigquery_dataset.dataset.dataset_id
+#   table_id   = "raw-sheet"
 
 
 
+#   time_partitioning {
+#     type = "DAY"
+#   }
+
+#   labels = {
+#     env = "default"
+#   }
+
+#   schema              = <<EOF
+# [
+#     {
+#         "name": "date",
+#         "type": "DATE",
+#         "mode": "REQUIRED"
+#       },
+#       {
+#         "name": "region",
+#         "type": "STRING",
+#         "mode": "REQUIRED"
+#       },
+#       {
+#         "name": "sector_id",
+#         "type": "INTEGER",
+#         "mode": "REQUIRED"
+#       },
+#       {
+#         "name": "brand_id",
+#         "type": "INTEGER",
+#         "mode": "REQUIRED"
+#       },
+#       {
+#         "name": "metric",
+#         "type": "STRING",
+#         "mode": "REQUIRED"
+#       },
+#       {
+#         "name": "sector_label",
+#         "type": "STRING",
+#         "mode": "NULLABLE",
+#         "description": "The descriptive label for the sector_id"
+#       },
+#       {
+#         "name": "brand_label",
+#         "type": "STRING",
+#         "mode": "NULLABLE",
+#         "description": "The descriptive label for the brand_id"
+#       },
+#       {
+#         "name": "ingest_datetime",
+#         "type": "DATETIME",
+#         "mode": "REQUIRED",
+#         "description": "The datetime this record was actually fetched / written to BQ"
+#       },
+#       {
+#         "name": "query",
+#         "type": "STRING",
+#         "mode": "REQUIRED",
+#         "description": "The sub-query that generated this record"
+#       },
+#       {
+#         "name": "volume",
+#         "type": "STRING",
+#         "mode": "NULLABLE"
+#       },
+#       {
+#         "name": "score",
+#         "type": "STRING",
+#         "mode": "NULLABLE"
+#       },
+#       {
+#         "name": "positives",
+#         "type": "STRING",
+#         "mode": "NULLABLE"
+#       },
+#       {
+#         "name": "negatives",
+#         "type": "STRING",
+#         "mode": "NULLABLE"
+#       },
+#       {
+#         "name": "neutrals",
+#         "type": "STRING",
+#         "mode": "NULLABLE"
+#       },
+#       {
+#         "name": "positives_neutrals",
+#         "type": "STRING",
+#         "mode": "NULLABLE"
+#       },
+#       {
+#         "name": "negatives_neutrals",
+#         "type": "STRING",
+#         "mode": "NULLABLE"
+#       }
+#   ]    
+# EOF
+#   deletion_protection = false # important
 # }
 
 
-locals {
-  project = var.project_id
-}
+
+# # }
 
 
-resource "google_bigquery_table" "query_table" {
-  project    = var.project_id
-  dataset_id = google_bigquery_dataset.dataset.dataset_id
-  table_id   = "data-view"
+# locals {
+#   project = var.project_id
+# }
 
 
-  view {
-    use_legacy_sql = false
-    query          = <<-EOF
-  SELECT * except (rank)
-  FROM (
-    SELECT 
-      *,
-      rank() over (partition by tbl.date, tbl.region, tbl.sector_id, tbl.brand_id, tbl.metric, tbl.query order by tbl.ingest_datetime desc) as rank
-    FROM `${local.project}.raw.raw-sheet` as tbl
-  ) 
-  WHERE 
-    rank = 1 and score != ""
-    EOF
-  }
-
-  deletion_protection = false # important
-  depends_on = [
-    google_bigquery_dataset.dataset,
-    google_bigquery_table.CSV
-  ]
-}
+# resource "google_bigquery_table" "query_table" {
+#   project    = var.project_id
+#   dataset_id = google_bigquery_dataset.dataset.dataset_id
+#   table_id   = "query-view"
 
 
+#   view {
+#     use_legacy_sql = false
+#     query          = <<-EOF
+#   SELECT * except (rank)
+#   FROM (
+#     SELECT 
+#       *,
+#       rank() over (partition by tbl.date, tbl.region, tbl.sector_id, tbl.brand_id, tbl.metric, tbl.query order by tbl.ingest_datetime desc) as rank
+#     FROM `${local.project}.raw.raw-sheet` as tbl
+#   ) 
+#   WHERE 
+#     rank = 1 and score != ""
+#     EOF
+#   }
 
-###################################################
-########## Configuration Data Secret  #############
-###################################################
-resource "google_secret_manager_secret" "secret-basic" {
-  project   = var.project_id
-  secret_id = "sms-config-data-${var.project_id}"
+#   deletion_protection = false # important
+#   depends_on = [
+#     google_bigquery_dataset.dataset,
+#     google_bigquery_table.raw_sheet
+#   ]
+# }
 
-  replication {
-    user_managed {
-      replicas {
-        location = local.default_region
-      }
-    }
-  }
-}
 
 
 ###################################################
