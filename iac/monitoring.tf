@@ -1,4 +1,10 @@
-## Cloud Run Application SLO latency
+## Cloud Run Application SLO 
+
+data "google_monitoring_notification_channel" "Cloud Run" {
+  project      = var.project_id
+  display_name = "admin"
+}
+
 
 resource "google_monitoring_service" "cloud_run" {
   project      = var.project_id
@@ -27,7 +33,7 @@ resource "google_monitoring_slo" "latency_slo" {
 
   basic_sli {
     latency {
-      threshold = "1s"
+      threshold = "5s"
     }
   }
 }
@@ -94,5 +100,52 @@ EOT
     severity = "warning"
 
   }
-  #notification_channels = var.notification_channels
+  notification_channels = ["${data.google_monitoring_notification_channel.application_alerts.name}"]
+}
+
+
+
+resource "google_monitoring_alert_policy" "burn_rate_availability_policy" {
+  depends_on   = [google_monitoring_slo.availability_slo]
+  project      = var.project_id
+  display_name = "${data.google_cloud_run_service.cr_data.namee} availability SLO burn rate"
+  combiner     = "OR"
+  conditions {
+    display_name = "10% burn rate on ${data.google_cloud_run_service.cr_data.namee} Availability SLO"
+    condition_threshold {
+      filter     = "select_slo_burn_rate(\"projects/${var.project_number}/services/${google_monitoring_service.cloud_run.service_id}/serviceLevelObjectives/${data.google_cloud_run_service.cr_data.namee}-availability-slo\", \"3600s\")"
+      duration   = "0s"
+      comparison = "COMPARISON_GT"
+      aggregations {
+        alignment_period     = "300s"
+        cross_series_reducer = "REDUCE_NONE"
+      }
+      threshold_value = 10
+    }
+  }
+  documentation {
+    content   = <<EOT
+# Availability SLO Burn Rate
+
+## Description
+
+There has been a 10% burn rate on the availability SLO error budget in the past 5 minutes on the [${data.google_cloud_run_service.cr_data.name}](https://console.cloud.google.com/run/detail/europe-west1/${data.google_cloud_run_service.cr_data.name}/metrics?project=${var.project_id}&supportedpurview=project)
+
+## Analysis
+
+- Check [GCP CloudRun metrics](https://console.cloud.google.com/run/detail/europe-west1/${data.google_cloud_run_service.cr_data.name}/metrics?${var.project_id}&supportedpurview=project)
+- Check [GCP Logs](https://console.cloud.google.com/run/detail/europe-west1/${data.google_cloud_run_service.cr_data.name}/logs?project=${var.project_id}&supportedpurview=project)
+
+## Resolution
+
+- Check the [GCP Alerting Dashboard](https://console.cloud.google.com/monitoring/alerting?project=${var.project_id}&supportedpurview=project) to see if incident is still open or has self-healed
+- If issue persists consider reverting to previous [CloudRun Revision](https://console.cloud.google.com/run/detail/europe-west1/${data.google_cloud_run_service.cr_data.name}/revisions?project=${var.project_id}&supportedpurview=project)
+
+EOT
+    mime_type = "text/markdown"
+  }
+  user_labels = {
+    service_name = data.google_cloud_run_service.cr_data.name
+  }
+  notification_channels = ["${data.google_monitoring_notification_channel.application_alerts.name}"]
 }
