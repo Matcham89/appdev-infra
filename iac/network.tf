@@ -5,8 +5,8 @@
 
 
 resource "google_compute_network" "vpc" {
-  name = "vpc-network-${var.project_id}"
-  project = var.project_id
+  name                    = "vpc-network-${var.project_id}"
+  project                 = var.project_id
   auto_create_subnetworks = false
 }
 
@@ -18,7 +18,7 @@ resource "google_compute_subnetwork" "subnet" {
 }
 
 resource "google_vpc_access_connector" "connector" {
-  name          = "vpc-connector-${var.project}"
+  name = "vpc-connector-${var.project}"
   subnet {
     name = google_compute_subnetwork.subnet.name
   }

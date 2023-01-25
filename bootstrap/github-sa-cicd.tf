@@ -59,6 +59,36 @@ resource "google_project_iam_member" "github_actions_access_cicd_dev" {
 }
 
 
+#################################################
+######### CD IAC WIF Account Test ENV ###########
+#################################################
+
+resource "google_project_iam_member" "github_actions_access_cicd_test" {
+  project = local.test_project_id
+  member  = google_service_account.sa_github_cicd.member
+  role    = each.value
+  for_each = toset([
+    "roles/bigquery.jobUser",
+    "roles/cloudkms.admin",
+    "roles/cloudkms.cryptoOperator",
+    "roles/cloudscheduler.admin",
+    "roles/cloudtasks.admin",
+    "roles/compute.loadBalancerAdmin",
+    "roles/compute.orgSecurityPolicyAdmin",
+    "roles/containeranalysis.notes.editor",
+    "roles/editor",
+    "roles/resourcemanager.projectIamAdmin",
+    "roles/secretmanager.admin",
+    "roles/secretmanager.secretAccessor",
+    "roles/iam.serviceAccountAdmin",
+    "roles/iam.serviceAccountKeyAdmin",
+    "roles/binaryauthorization.attestorsAdmin",
+    "roles/run.viewer",
+    "roles/bigquery.dataEditor",
+  ])
+}
+
+
 resource "google_iam_workload_identity_pool" "github_pool_cicd" {
   project                   = local.cicd_project_id
   workload_identity_pool_id = "github-action-pool-cicd"
