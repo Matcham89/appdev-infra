@@ -2,6 +2,10 @@ data "google_project" "dev_project" {
   project_id = local.bootstrap_config.dev_project_id
 }
 
+data "google_project" "test_project" {
+  project_id = local.bootstrap_config.test_project_id
+}
+
 
 resource "google_project_service" "enable_artifact_apis" {
   project = local.cicd_project_id

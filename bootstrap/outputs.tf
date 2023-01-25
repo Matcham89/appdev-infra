@@ -38,6 +38,18 @@ output "dev_project_number" {
   description = "The Number of the DEV project"
 }
 
+output "test_project_id" {
+  value       = local.bootstrap_config.test_project_id
+  description = "The ID of the test project"
+}
+
+output "test_project_number" {
+  value       = data.google_project.test_project.number
+  description = "The Number of the test project"
+}
+
+
+
 output "cicd_project_id" {
   value       = local.bootstrap_config.cicd_project_id
   description = "The ID of the cicd project"
@@ -87,9 +99,24 @@ output "github_service_account_dev" {
   description = "Github Actions Servive Account for DEV App deployment"
 }
 
-output "github_repo_binding" {
+output "github_repo_binding_cicd" {
   value = google_service_account_iam_binding.github_account_binding_cicd.members
 }
 
+output "github_repo_binding_dev" {
+  value = google_service_account_iam_binding.github_account_binding_dev.members
+}
+
+output "github_repo_binding_test" {
+  value = google_service_account_iam_binding.github_account_binding_test.members
+}
 
 
+output "provider_full_id_test" {
+  value       = google_iam_workload_identity_pool_provider.github_provider_test.name
+  description = "Github Actions Provider for test App deployment"
+}
+output "github_service_account_test" {
+  value       = google_service_account.sa_github_test.email
+  description = "Github Actions Servive Account for test App deployment"
+}
