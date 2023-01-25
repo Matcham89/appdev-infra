@@ -1,16 +1,34 @@
 
+########################################################
+####################### VPC  ###########################
+########################################################
+
+
+resource "google_compute_network" "vpc" {
+  name = "vpc-network-${var.project_id}"
+  project = var.project_id
+  auto_create_subnetworks = false
+}
+
+resource "google_compute_subnetwork" "subnet" {
+  name          = "vpc-subnet-${var.project_id}"
+  ip_cidr_range = "10.2.0.0/28"
+  region        = local.default_region
+  network       = google_compute_network.vpc.id
+}
+
+resource "google_vpc_access_connector" "connector" {
+  name          = "vpc-connector-${var.project}"
+  subnet {
+    name = google_compute_subnetwork.subnet.name
+  }
+}
+
 
 # #######################################################
 # ############### Network End Group #####################
 # #######################################################
 
-
-# data "google_cloud_run_service" "cr_data" {
-#   project  = var.project_id
-#   location = local.default_region
-#   name     = "cr-hello-world"
-
-# }
 
 resource "google_compute_region_network_endpoint_group" "serverless_neg" {
   provider              = google-beta

@@ -15,8 +15,9 @@ image_repo_name: ar-mlab-ui-cicd
 
 # Name of the Repo for the IaC
 # Format "Owner/Repo Name"
-cicd_attribute_repository: Matcham89/appdev-infra
+cicd_attribute_repository: groupm-global/mcm-mlab-ui-infra
 
 # Name of the Repo for the Application
 # Format "Owner/Repo Name"
-app_attribute_repository: Matcham89/appdev-application
+app_attribute_repository: groupm-global/mcm-mlab-ui-web-app
+

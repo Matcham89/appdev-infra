@@ -1,6 +1,6 @@
 ## Cloud Run Application SLO 
 
-data "google_monitoring_notification_channel" "Cloud Run" {
+data "google_monitoring_notification_channel" "cloud_run" {
   project      = var.project_id
   display_name = "admin"
 }
@@ -86,7 +86,6 @@ There has been a 10% burn rate on the latency SLO error budget in the past 5 min
 
 - Check [GCP CloudRun metrics](https://console.cloud.google.com/run/detail/europe-west2/${data.google_cloud_run_service.cr_data.name}/metrics?${var.project_id}&supportedpurview=project)
 - Check [GCP Logs](https://console.cloud.google.com/run/detail/europe-west2/${data.google_cloud_run_service.cr_data.name}/logs?project=${var.project_id}&supportedpurview=project)
-- Check [GCP Redis Memcache](https://console.cloud.google.com/memorystore/redis/locations/europe-west2/instances/booking-platform-memorystore/details?project=${var.project_id}&supportedpurview=project) 
 
 ## Resolution
 
