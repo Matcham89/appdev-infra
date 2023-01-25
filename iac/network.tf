@@ -12,7 +12,7 @@ resource "google_compute_network" "vpc" {
 
 resource "google_compute_subnetwork" "subnet" {
   name          = "vpc-subnet-${var.project_id}"
-  ip_cidr_range = "10.2.0.0/28"
+  ip_cidr_range = "10.2.0.0/25"
   region        = local.default_region
   network       = google_compute_network.vpc.id
 }
@@ -40,9 +40,6 @@ resource "google_compute_region_network_endpoint_group" "serverless_neg" {
     service = data.google_cloud_run_service.cr_data.name
   }
 }
-
-
-
 
 # #######################################################
 # ######## Serverless External Load Balancer ############

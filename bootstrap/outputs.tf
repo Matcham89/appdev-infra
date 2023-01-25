@@ -68,14 +68,6 @@ output "cicd_project_id" {
 #   value = google_iam_workload_identity_pool_provider.github_provider_cicd.workload_identity_pool_provider_id
 # }
 
-output "provider_full_id_cicd" {
-  value       = google_iam_workload_identity_pool_provider.github_provider_cicd.name
-  description = "Github Actions Provider for IaC deployment"
-}
-
-output "github_service_account_cicd" {
-  value = google_service_account.sa_github_cicd.email
-}
 
 
 # output "Github_Pool_id_dev" {
@@ -89,6 +81,16 @@ output "github_service_account_cicd" {
 # output "provider_id_dev" {
 #   value = google_iam_workload_identity_pool_provider.github_provider_dev.workload_identity_pool_provider_id
 # }
+
+output "provider_full_id_cicd" {
+  value       = google_iam_workload_identity_pool_provider.github_provider_cicd.name
+  description = "Github Actions Provider for IaC deployment"
+}
+
+output "github_service_account_cicd" {
+  value = google_service_account.sa_github_cicd.email
+}
+
 
 output "provider_full_id_dev" {
   value       = google_iam_workload_identity_pool_provider.github_provider_dev.name
