@@ -13,7 +13,6 @@ resource "google_project_service" "enable_artifact_apis" {
     "binaryauthorization.googleapis.com",
     "containerscanning.googleapis.com",
     "cloudresourcemanager.googleapis.com",
-    "cloudkms.googleapis.com"
   ])
   service                    = each.value
   disable_dependent_services = true
