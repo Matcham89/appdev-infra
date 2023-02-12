@@ -10,5 +10,6 @@ locals {
   cicd_attribute_repository = local.bootstrap_config.cicd_attribute_repository
   app_attribute_repository  = local.bootstrap_config.app_attribute_repository
   state_bucket              = local.bootstrap_config.state_bucket
+  monitor_alerts_email      = local.bootstrap_config.monitor_alerts_email
 }
 

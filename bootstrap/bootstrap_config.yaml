@@ -1,7 +1,8 @@
-  cicd_project_id: cmat-cicd-987 
-  dev_project_id: cmat-dev-987
+  cicd_project_id: yumyum-cicd-01 
+  dev_project_id: yumyum-dev-01
   default_region: europe-west2
-  image_repo_name: ar-cmt-987
+  image_repo_name: ar-yumyum-01
   cicd_attribute_repository: Matcham89/appdev-infra
   app_attribute_repository: Matcham89/appdev-application
-  state_bucket: "bkt-cmat-987-cmat-cicd-987"
+  state_bucket: "bkt-yumyum-01-yumyum-cicd-01"
+  monitor_alerts_email: chris.matcham@appsbroker.com

@@ -1,10 +1,14 @@
 ## Cloud Run Application SLO 
 
-data "google_monitoring_notification_channel" "cloud_run" {
-  project      = var.project_id
+resource "google_monitoring_notification_channel" "application_alerts" {
   display_name = "admin"
-}
+  project      = var.project_id
+  type         = "email"
+  labels = {
+    email_address = "${local.monitor_alerts_email}"
+  }
 
+}
 
 resource "google_monitoring_service" "cloud_run" {
   project      = var.project_id
@@ -99,7 +103,7 @@ EOT
     severity = "warning"
 
   }
-  notification_channels = ["${data.google_monitoring_notification_channel.application_alerts.name}"]
+  notification_channels = ["${google_monitoring_notification_channel.application_alerts.display_name}"]
 }
 
 
@@ -146,5 +150,5 @@ EOT
   user_labels = {
     service_name = data.google_cloud_run_service.cr_data.name
   }
-  notification_channels = ["${data.google_monitoring_notification_channel.application_alerts.name}"]
+  notification_channels = ["${google_monitoring_notification_channel.application_alerts.display_name}"]
 }
