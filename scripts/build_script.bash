@@ -3,6 +3,10 @@
 # Prompt
 echo "Please ensure you are working on a clean branch off of 'main'"
 
+# Provide google admin credentials
+echo "Please provide the google cloud admin account being used (my-account@google.com)"
+read admin_user_account
+
 # Log in to google cloud
 echo "Are you ready to log into Google Cloud (y/n)?"
 read login_response
@@ -87,6 +91,16 @@ elif [[ $project_level == "fld" && $create_project == "y" ]]; then
   gcloud projects create $dev_project_id --folder=$folder_id
 fi 
 
+# Enable required workload id permission
+gcloud projects add-iam-policy-binding $cicd_project_id \
+    --member=user:$admin_user_account --role=roles/iam.workloadIdentityPoolAdmin  \
+
+# Enable required workload id permission
+gcloud projects add-iam-policy-binding $dev_project_id \
+    --member=user:$admin_user_account --role=roles/iam.workloadIdentityPoolAdmin  \
+
+
+
 # Enable billing for the newly created projects
 gcloud beta billing accounts list
 echo "Please provide the billing account 'ACCOUNT_ID' for the projects"
@@ -107,6 +121,7 @@ cat <<EOF > bootstrap_config.yaml
   cicd_attribute_repository: $cicd_attribute_repository
   app_attribute_repository: $app_attribute_repository
   state_bucket: "${state_bucket}-${cicd_project_id}"
+  monitor_alerts_email: $admin_user_account
 EOF
 
 # Update backend
@@ -125,15 +140,21 @@ cat <<EOF > remote_states.tf
 data "terraform_remote_state" "bootstrap" {
   backend = "gcs"
   config = {
-    bucket = ${state_bucket}-${cicd_project_id}
+    bucket = "${state_bucket}-${cicd_project_id}"
     prefix = "bootstrap"
   }
 }
 
 locals {
-  default_region   = data.terraform_remote_state.bootstrap.outputs.default_region
-  artifact_repo_id = data.terraform_remote_state.bootstrap.outputs.google_artifact_registry_repository_name
-  cicd_project_id  = data.terraform_remote_state.bootstrap.outputs.cicd_project_id
+  default_region       = data.terraform_remote_state.bootstrap.outputs.default_region
+  artifact_repo_id     = data.terraform_remote_state.bootstrap.outputs.google_artifact_registry_repository_name
+  cicd_project_id      = data.terraform_remote_state.bootstrap.outputs.cicd_project_id
+  monitor_alerts_email = data.terraform_remote_state.bootstrap.outputs.monitor_alerts_email
+  attestor_name        = data.terraform_remote_state.bootstrap.outputs.attestor_name
+  keyring_name         = data.terraform_remote_state.bootstrap.outputs.keyring_name
+  key_name             = data.terraform_remote_state.bootstrap.outputs.key_name
+  keyring_location     = data.terraform_remote_state.bootstrap.outputs.keyring_location
+  key_version          = data.terraform_remote_state.bootstrap.outputs.key_version
 }
 EOF
 
@@ -151,12 +172,20 @@ read terrafrom_plan_response
 
 if [[ $terrafrom_plan_response == "y" ]]; then 
  echo "Terrafrom Apply will now run!"
-elif [[ $terrafrom_plan_response == "n" ]]; then 
- exit
 fi 
 
 echo "Terraform apply"
 terraform apply ./.plan
+
+# Confirm if applied correctly
+echo "Did the apply succeed ? (y/n)"
+read success_response
+
+if [[ $success_response == "n" ]]; then 
+ echo "Terrafrom Apply will now run!"
+ terraform plan -out ./.plan
+ terraform apply ./.plan
+fi 
 
 
 CICD_WORKLOAD_IDENTITY_PROVIDER=$(terraform output -raw provider_full_id_cicd)
@@ -199,13 +228,25 @@ rm .env
 
 # Bootstrap is now complete
 echo "The bootstrap is now complete."
-echo "Please proceed to populate the github secrets in the repo."
+echo "Please proceed to populate notifacation channels"
+echo "Has the above been completed (y/n)"
+read notifacation_done
+
+if [[ $notifacation_done == "y" ]]; then 
+ echo "Please continue"
+fi 
+
+if [[ $notifacation_done == "n" ]]; then 
+ echo "This must be completed before proceeding"
+fi 
 
 # Change dir to iac
 cd ../iac
 
+export TF_VAR_project_id=$dev_project_id
+export TF_VAR_project_number=$dev_project_number
 echo "Terraform init"
-terraform init 
+terraform init -backend-config="bucket=${state_bucket}-${cicd_project_id}" -backend-config="prefix=dev"
 
 echo "Terraform plan"
 terraform plan -out ./.plan
@@ -217,8 +258,6 @@ read terrafrom_plan_response
 
 if [[ $terrafrom_plan_response == "y" ]]; then 
  echo "Terrafrom Apply will now run!"
-elif [[ $terrafrom_plan_response == "n" ]]; then 
- exit
 fi 
 
 echo "Terraform apply"
@@ -230,9 +269,6 @@ SERVICE_ACCOUNT=$(terraform output -raw github_service_account_dev)
 cat <<EOF > .env
 DEV_WORKLOAD_IDENTITY_PROVIDER: $DEV_WORKLOAD_IDENTITY_PROVIDER
 DEV_SERVICE_ACCOUNT: $DEV_SERVICE_ACCOUNT
-STATE_BUCKET: $STATE_BUCKET
-DEV_PROJECT_ID: $DEV_PROJECT_ID
-DEV_PROJECT_NUMBER: $DEV_PROJECT_NUMBER 
 RESOURCE_CLOUD_RUN: $resource_name
 EOF
 

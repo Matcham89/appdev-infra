@@ -88,4 +88,7 @@ resource "google_service_account_iam_binding" "github_account_binding_dev" {
     "principalSet://iam.googleapis.com/${google_iam_workload_identity_pool.github_pool_dev.name}/attribute.repository/${local.app_attribute_repository}"
 
   ]
+    depends_on = [
+    google_service_account.sa_github_dev
+  ]
 }

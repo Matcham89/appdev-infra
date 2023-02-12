@@ -107,12 +107,12 @@ EOT
 resource "google_monitoring_alert_policy" "burn_rate_availability_policy" {
   depends_on   = [google_monitoring_slo.availability_slo]
   project      = var.project_id
-  display_name = "${data.google_cloud_run_service.cr_data.namee} availability SLO burn rate"
+  display_name = "${data.google_cloud_run_service.cr_data.name} availability SLO burn rate"
   combiner     = "OR"
   conditions {
-    display_name = "10% burn rate on ${data.google_cloud_run_service.cr_data.namee} Availability SLO"
+    display_name = "10% burn rate on ${data.google_cloud_run_service.cr_data.name} Availability SLO"
     condition_threshold {
-      filter     = "select_slo_burn_rate(\"projects/${var.project_number}/services/${google_monitoring_service.cloud_run.service_id}/serviceLevelObjectives/${data.google_cloud_run_service.cr_data.namee}-availability-slo\", \"3600s\")"
+      filter     = "select_slo_burn_rate(\"projects/${var.project_number}/services/${google_monitoring_service.cloud_run.service_id}/serviceLevelObjectives/${data.google_cloud_run_service.cr_data.name}-availability-slo\", \"3600s\")"
       duration   = "0s"
       comparison = "COMPARISON_GT"
       aggregations {

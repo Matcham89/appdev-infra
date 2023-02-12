@@ -117,3 +117,7 @@ output "key_version" {
   value = data.google_kms_crypto_key_version.version.version
 }
 
+output "monitor_alerts_email" {
+  value = local.monitor_alerts_email
+
+}
