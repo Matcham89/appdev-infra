@@ -1,7 +1,7 @@
-  cicd_project_id: chris-cicd-company-01 
-  dev_project_id: chris-dev-company-01
+  cicd_project_id: chris-appdev-cicd-02 
+  dev_project_id: chris-appdev-dev-02
   default_region: europe-west2
-  image_repo_name: chris-cicd-ar-01
+  image_repo_name: ar-appdev-02
   cicd_attribute_repository: Matcham89/appdev-infra
   app_attribute_repository: Matcham89/appdev-application
-  state_bucket: "chris-cicd-bkt-01-chris-cicd-company-01"
+  state_bucket: "bkt-appdev-02-chris-appdev-cicd-02"
