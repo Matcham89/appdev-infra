@@ -1,8 +1,8 @@
-  cicd_project_id: yumyum-cicd-01 
-  dev_project_id: yumyum-dev-01
+  cicd_project_id: jaff-cicd-89 
+  dev_project_id: jaff-dev-89
   default_region: europe-west2
-  image_repo_name: ar-yumyum-01
+  image_repo_name: ar-jaff-89
   cicd_attribute_repository: Matcham89/appdev-infra
   app_attribute_repository: Matcham89/appdev-application
-  state_bucket: "bkt-yumyum-01-yumyum-cicd-01"
+  state_bucket: "bkt-jaff-89-jaff-cicd-89"
   monitor_alerts_email: chris.matcham@appsbroker.com

@@ -119,5 +119,8 @@ output "key_version" {
 
 output "monitor_alerts_email" {
   value = local.monitor_alerts_email
+}
 
+output "resource_name" {
+  value = local.resource_name
 }

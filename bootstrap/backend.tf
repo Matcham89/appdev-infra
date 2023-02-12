@@ -1,6 +1,6 @@
   terraform {
   backend "gcs" {
-    bucket = "bkt-yumyum-01-yumyum-cicd-01"
+    bucket = "bkt-jaff-89-jaff-cicd-89"
     prefix = "bootstrap"
    }
   }

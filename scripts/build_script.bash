@@ -82,6 +82,11 @@ read cicd_attribute_repository
 echo "Please enter the id of the GitHub repo for the infrastructure (OWNER/REPO)"
 read app_attribute_repository
 
+# Prepare cloud run for iac deployment
+echo "In order to proceed, cloud run must deploy a template."
+echo "Please provide the name for the Cloud Run resource"
+read resource_name
+
 # Create the provided projects
 if [[ $project_level == "org" && $create_project == "y" ]]; then 
   gcloud projects create $cicd_project_id --organization=$organization_id
@@ -122,6 +127,7 @@ cat <<EOF > bootstrap_config.yaml
   app_attribute_repository: $app_attribute_repository
   state_bucket: "${state_bucket}-${cicd_project_id}"
   monitor_alerts_email: $admin_user_account
+  resource_name: $resource_name
 EOF
 
 # Update backend
@@ -155,6 +161,7 @@ locals {
   key_name             = data.terraform_remote_state.bootstrap.outputs.key_name
   keyring_location     = data.terraform_remote_state.bootstrap.outputs.keyring_location
   key_version          = data.terraform_remote_state.bootstrap.outputs.key_version
+  resource_name        = data.terraform_remote_state.bootstrap.outputs.resource_name
 }
 EOF
 
@@ -204,12 +211,6 @@ EOF
 
 # Set github secrets for iac
 gh secret set -f .env
-
-
-# Prepare cloud run for iac deployment
-echo "In order to proceed, cloud run must deploy a template."
-echo "Please provide the name for the Cloud Run resource"
-read resource_name
 
 echo "Running cloud run deployment"
 gcloud run deploy $resource_name \
