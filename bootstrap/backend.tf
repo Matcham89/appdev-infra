@@ -1,6 +1,6 @@
-terraform {
+  terraform {
   backend "gcs" {
-    bucket = "bkt-sao-89-sao-cicd-89"
+    bucket = "bkt-deku-89-deku-cicd-89-deku-cicd-89"
     prefix = "bootstrap"
+   }
   }
-}
