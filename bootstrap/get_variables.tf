@@ -11,5 +11,6 @@ locals {
   app_attribute_repository  = local.bootstrap_config.app_attribute_repository
   state_bucket              = local.bootstrap_config.state_bucket
   monitor_alerts_email      = local.bootstrap_config.monitor_alerts_email
+  resource_name             = local.bootstrap_config.resource_name
 }
 

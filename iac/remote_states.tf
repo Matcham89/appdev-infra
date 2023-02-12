@@ -1,7 +1,7 @@
 data "terraform_remote_state" "bootstrap" {
   backend = "gcs"
   config = {
-    bucket = "bkt-jaff-89-jaff-cicd-89"
+    bucket = "bkt-sao-89-sao-cicd-89"
     prefix = "bootstrap"
   }
 }
@@ -16,4 +16,5 @@ locals {
   key_name             = data.terraform_remote_state.bootstrap.outputs.key_name
   keyring_location     = data.terraform_remote_state.bootstrap.outputs.keyring_location
   key_version          = data.terraform_remote_state.bootstrap.outputs.key_version
+  resource_name        = data.terraform_remote_state.bootstrap.outputs.resource_name
 }
