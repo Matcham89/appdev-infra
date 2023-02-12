@@ -1,7 +1,7 @@
 data "terraform_remote_state" "bootstrap" {
   backend = "gcs"
   config = {
-    bucket = ""
+    bucket = chris-cicd-bkt-01-chris-cicd-company-01
     prefix = "bootstrap"
   }
 }

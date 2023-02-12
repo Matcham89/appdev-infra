@@ -1,6 +1,6 @@
-  terraform {
+terraform {
   backend "gcs" {
-    bucket = ""
+    bucket = "chris-cicd-bkt-01-chris-cicd-company-01"
     prefix = "bootstrap"
-   }
   }
+}

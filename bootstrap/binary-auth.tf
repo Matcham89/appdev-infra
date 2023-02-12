@@ -16,6 +16,9 @@ resource "google_binary_authorization_attestor" "attestor" {
       }
     }
   }
+  depends_on = [
+    google_project_service.enable_artifact_apis
+  ]
 }
 
 data "google_kms_crypto_key_version" "version" {
@@ -30,6 +33,9 @@ resource "google_container_analysis_note" "note" {
       human_readable_name = "Attestor Note"
     }
   }
+  depends_on = [
+    google_project_service.enable_artifact_apis
+  ]
 }
 
 resource "google_kms_crypto_key" "asymmetric-sign-key" {
@@ -44,10 +50,16 @@ resource "google_kms_crypto_key" "asymmetric-sign-key" {
   lifecycle {
     prevent_destroy = false
   }
+  depends_on = [
+    google_project_service.enable_artifact_apis
+  ]
 }
 
 resource "google_kms_key_ring" "keyring" {
   project  = local.cicd_project_id
   name     = "binauth-keyring-${local.cicd_project_id}"
   location = local.default_region
+  depends_on = [
+    google_project_service.enable_artifact_apis
+  ]
 }
