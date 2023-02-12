@@ -5,11 +5,6 @@ on:
      branches:
      - main
      
-env:
-   WORKLOAD_IDENTITY_PROVIDER: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
-   SERVICE_ACCOUNT: ${{ secrets.SERVICE_ACCOUNT }}
-   STATE_BUCKET: ${{ secrets.STATE_BUCKET }}
-
 jobs:
   Terraform-IaC:
     permissions:
@@ -21,35 +16,13 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@v2
-      
-      - name: Set Variables DEV
-        if: github.ref_name == 'main'
-        run: |
-            echo PROJECT_ID=${{ secrets.DEV_PROJECT_ID }} >> $GITHUB_ENV 
-            echo PROJECT_NUMBER=${{ secrets.DEV_PROJECT_NUMBER }} >> $GITHUB_ENV 
-            echo BUCKET_PREFIX=dev >> $GITHUB_ENV
-     
-      - name: Set Variables TEST
-        if: github.ref_name == 'test'
-        run: |
-            echo PROJECT_ID=test >> $GITHUB_ENV
-            echo PROJECT_NUMBER=test >> $GITHUB_ENV
-            echo BUCKET_PREFIX=test >> $GITHUB_ENV
-      
-      - name: Set Variables UAT
-        if: github.ref_name == 'uat'
-        run: |
-            echo PROJECT_ID=createlift-uat >> $GITHUB_ENV
-            echo PROJECT_NUMBER=uat >> $GITHUB_ENV
-            echo BUCKET_PREFIX=uat >> $GITHUB_ENV
-
 
       - name: Google Auth
         id: auth
         uses: 'google-github-actions/auth@v0'
         with:
-          workload_identity_provider: '${{ env.WORKLOAD_IDENTITY_PROVIDER }}' 
-          service_account: '${{ env.SERVICE_ACCOUNT }}' 
+          workload_identity_provider: '${{ secrets.CICD_WORKLOAD_IDENTITY_PROVIDER }}'
+          service_account: '${{ secrets.CICD_SERVICE_ACCOUNT }}' 
 
 
       # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
@@ -63,18 +36,24 @@ jobs:
       - name: 'Use gcloud CLI'
         run: 'gcloud info'
 
-      # Run Terraform init
-      - name: Terraform Init ${{ env.PROJECT_ID }}
+      - name: 'Check Terraform Formatting'
+        working-directory: ./iac
+        shell: bash
+        run: |-
+          terraform fmt -recursive -check
+
+ 
+      - name: Terraform Init 
         working-directory: ./iac
         run: |
-          terraform init -backend-config="bucket=${{ env.STATE_BUCKET }}" -backend-config="prefix=${{ env.BUCKET_PREFIX }}"
+          terraform init -backend-config="bucket=${{ secrets.STATE_BUCKET }}" -backend-config="prefix=dev"
     
       # On push to main, build or change infrastructure according to Terraform configuration files
-      - name: Terraform Apply ${{ env.PROJECT_ID }}
+      - name: Terraform Apply 
         working-directory: ./iac
         env: 
-          TF_VAR_project_id: ${{ env.PROJECT_ID }}
-          TF_VAR_project_number: ${{ env.PROJECT_NUMBER }}
+          TF_VAR_project_id: ${{ secrets.DEV_PROJECT_ID }}
+          TF_VAR_project_number: ${{ secrets.DEV_PROJECT_NUMBER }}
         run: 
           terraform apply -lock=false -no-color -auto-approve || exit 1
       

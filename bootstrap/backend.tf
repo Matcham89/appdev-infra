@@ -1,6 +1,6 @@
-terraform {
+  terraform {
   backend "gcs" {
-    bucket = "bkt-mlab-ui-cicd-tfstates"
+    bucket = "chris-bash-bkt-001-chris-cicd-bash-001"
     prefix = "bootstrap"
+   }
   }
-}

@@ -1,0 +1,7 @@
+  cicd_project_id: chris-cicd-bash-001 
+  dev_project_id: chris-dev-bash-001
+  default_region: europe-west2
+  image_repo_name: chris-bash-art-001
+  cicd_attribute_repository: Matcham89/appdev-infra
+  app_attribute_repository: Matcham89/appdev-application
+  state_bucket: "chris-bash-bkt-001-chris-cicd-bash-001"

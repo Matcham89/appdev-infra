@@ -200,7 +200,8 @@ Run the below command to create a Cloud Run resource with some basic options. (T
 
 ```bash
 export PROJECT=<NAME OF DEV PROJECT>
-gcloud run deploy appdev-application-test --image us-docker.pkg.dev/cloudrun/container/hello --allow-unauthenticated --ingress internal-and-cloud-load-balancing --region europe-west2 --project $PROJECT
+export APP_NAME=<NAME OF THE APPLICATION>
+gcloud run deploy $APP_NAME --image us-docker.pkg.dev/cloudrun/container/hello --allow-unauthenticated --ingress internal-and-cloud-load-balancing --region europe-west2 --project $PROJECT
 ```
 
 <p>&nbsp;</p>

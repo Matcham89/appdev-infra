@@ -1,3 +1,6 @@
+output "STATE_BUCKET" {
+  value = local.state_bucket
+}
 
 output "default_region" {
   value       = local.default_region
@@ -26,8 +29,6 @@ output "google_artifact_registry_repository_project_region" {
   sensitive = true
 }
 
-
-
 output "dev_project_id" {
   value       = local.bootstrap_config.dev_project_id
   description = "The ID of the Dev project"
@@ -37,18 +38,6 @@ output "dev_project_number" {
   value       = data.google_project.dev_project.number
   description = "The Number of the DEV project"
 }
-
-output "test_project_id" {
-  value       = local.bootstrap_config.test_project_id
-  description = "The ID of the test project"
-}
-
-output "test_project_number" {
-  value       = data.google_project.test_project.number
-  description = "The Number of the test project"
-}
-
-
 
 output "cicd_project_id" {
   value       = local.bootstrap_config.cicd_project_id
@@ -91,7 +80,6 @@ output "github_service_account_cicd" {
   value = google_service_account.sa_github_cicd.email
 }
 
-
 output "provider_full_id_dev" {
   value       = google_iam_workload_identity_pool_provider.github_provider_dev.name
   description = "Github Actions Provider for DEV App deployment"
@@ -109,16 +97,23 @@ output "github_repo_binding_dev" {
   value = google_service_account_iam_binding.github_account_binding_dev.members
 }
 
-output "github_repo_binding_test" {
-  value = google_service_account_iam_binding.github_account_binding_test.members
+output "attestor_name" {
+  value = google_binary_authorization_attestor.attestor.id
 }
 
+output "keyring_name" {
+  value = google_kms_key_ring.keyring.name
+}
 
-output "provider_full_id_test" {
-  value       = google_iam_workload_identity_pool_provider.github_provider_test.name
-  description = "Github Actions Provider for test App deployment"
+output "key_name" {
+  value = google_kms_crypto_key.asymmetric-sign-key.name
 }
-output "github_service_account_test" {
-  value       = google_service_account.sa_github_test.email
-  description = "Github Actions Servive Account for test App deployment"
+
+output "keyring_location" {
+  value = google_kms_key_ring.keyring.location
 }
+
+output "key_version" {
+  value = data.google_kms_crypto_key_version.version.version
+}
+

@@ -2,32 +2,20 @@ output "GOOGLE_CLOUD_PROJECT" {
   value = data.google_project.project_id.project_id
 }
 
-# output "BQ_DATASET" {
-#   value = google_bigquery_dataset.dataset.dataset_id
-# }
-
-# output "BQ_TABLE" {
-#   value = google_bigquery_table.raw_sheet.table_id
-# }
-
-output "PASSWORD_SECRET" {
-  value = google_secret_manager_secret.password.secret_id
-}
-
 output "KEYRING_NAME" {
-  value = google_kms_key_ring.keyring.name
+  value = local.keyring_name
 }
 
 output "KEY_NAME" {
-  value = google_kms_crypto_key.asymmetric-sign-key.name
+  value = local.key_name
 }
 
 output "KEYRING_LOCATION" {
-  value = google_kms_key_ring.keyring.location
+  value = local.keyring_location
 }
 
 output "KEY_VERSION" {
-  value = data.google_kms_crypto_key_version.version.version
+  value = local.key_version
 }
 
 output "ARTIFACT_REPOSTIORY_NAME" {
@@ -35,7 +23,7 @@ output "ARTIFACT_REPOSTIORY_NAME" {
 }
 
 output "ATTESTOR_NAME" {
-  value = google_binary_authorization_attestor.attestor.name
+  value = local.attestor_name
 }
 
 output "REPO_PROJECT_ID" {
@@ -58,10 +46,15 @@ output "CLOUD_RUN_SA_EMAIL" {
   value = google_service_account.sa_cr.email
 }
 
-# output "QUEUE_NAME" {
-#   value = google_cloud_tasks_queue.queue.name
-# }
+output "RESOURCE_CLOUD_RUN" {
+  value = data.google_cloud_run_service.cr_data.name
+}
+
+output "CONNECTOR_NAME" {
+  value = google_vpc_access_connector.connector.name
+}
 
 output "TARGET_BUCKET" {
   value = google_storage_bucket.gcs.name
 }
+
