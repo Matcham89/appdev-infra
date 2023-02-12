@@ -19,6 +19,7 @@ resource "google_project_iam_member" "github_actions_access_dev" {
     "roles/artifactregistry.reader",
     "roles/artifactregistry.admin",
     "roles/viewer",
+    "roles/run.invoker",
     "roles/run.viewer",
     "roles/binaryauthorization.attestorsAdmin",
     "roles/storage.objectAdmin",
@@ -28,8 +29,9 @@ resource "google_project_iam_member" "github_actions_access_dev" {
     "roles/containeranalysis.notes.attacher",
     "roles/run.developer",
     "roles/iam.serviceAccountUser",
-    "roles/iam.serviceAccountTokenCreator"
-
+    "roles/iam.serviceAccountTokenCreator",
+    "roles/iam.serviceAccountTokenCreator",
+    "roles/binaryauthorization.attestorsVerifier",
   ])
 }
 
@@ -42,6 +44,10 @@ resource "google_project_iam_member" "github_actions_access_dev_cicd" {
 
     "roles/artifactregistry.admin",
     "roles/viewer",
+    "roles/cloudkms.cryptoOperator",
+    "roles/containeranalysis.occurrences.editor",
+    "roles/containeranalysis.notes.attacher",
+    "roles/binaryauthorization.attestorsVerifier"
   ])
 }
 
