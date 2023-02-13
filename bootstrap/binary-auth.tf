@@ -23,6 +23,9 @@ resource "google_binary_authorization_attestor" "attestor" {
 
 data "google_kms_crypto_key_version" "version" {
   crypto_key = google_kms_crypto_key.asymmetric-sign-key.id
+  depends_on = [
+    google_kms_crypto_key.asymmetric-sign-key
+  ]
 }
 
 resource "google_container_analysis_note" "note" {

@@ -1,7 +1,7 @@
 data "terraform_remote_state" "bootstrap" {
   backend = "gcs"
   config = {
-    bucket = "bkt-banjo-89-banjo-cicd-89"
+    bucket = "bkt-papaj-01-papaj-cicd-01"
     prefix = "bootstrap"
   }
 }
