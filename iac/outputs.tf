@@ -15,7 +15,7 @@ output "KEYRING_LOCATION" {
 }
 
 output "KEY_VERSION" {
-  value = local.key_version
+  value = data.google_kms_crypto_key_version.my_crypto_key_version.version
 }
 
 output "ARTIFACT_REPOSTIORY_NAME" {

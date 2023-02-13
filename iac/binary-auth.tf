@@ -5,6 +5,7 @@ data "google_artifact_registry_repository" "cicd_repo" {
 }
 
 
+
 resource "google_binary_authorization_policy" "policy" {
   project = var.project_id
   # admission_whitelist_patterns {
@@ -16,4 +17,18 @@ resource "google_binary_authorization_policy" "policy" {
     enforcement_mode        = "ENFORCED_BLOCK_AND_AUDIT_LOG"
     require_attestations_by = [local.attestor_name]
   }
+}
+
+data "google_kms_key_ring" "my_key_ring" {
+  name     = local.keyring_name
+  location = local.default_region
+}
+
+data "google_kms_crypto_key" "my_crypto_key" {
+  name     = local.key_name
+  key_ring = data.google_kms_key_ring.my_key_ring.id
+}
+
+data "google_kms_crypto_key_version" "my_crypto_key_version" {
+  crypto_key = data.google_kms_crypto_key.my_key.id
 }

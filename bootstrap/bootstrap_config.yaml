@@ -1,9 +1,9 @@
-  cicd_project_id: zizi-cicd-012 
-  dev_project_id: zizi-dev-012
+  cicd_project_id: jsteat-cicd-01 
+  dev_project_id: jsteat-dev-01
   default_region: europe-west2
-  image_repo_name: ar-zizi-02
+  image_repo_name: ar-jstest-01
   cicd_attribute_repository: Matcham89/appdev-infra
   app_attribute_repository: Matcham89/appdev-application
-  state_bucket: "bkt-zizi-02-zizi-cicd-012"
+  state_bucket: "bkt-jstest-01-jsteat-cicd-01"
   monitor_alerts_email: chris.matcham@appsbroker.com
-  resource_name: zizi-webapp
+  resource_name: jsteat-webapp
