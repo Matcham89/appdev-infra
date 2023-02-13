@@ -1,9 +1,9 @@
-  cicd_project_id: papaj-cicd-01 
-  dev_project_id: papaj-dev-01
+  cicd_project_id: zizi-cicd-012 
+  dev_project_id: zizi-dev-012
   default_region: europe-west2
-  image_repo_name: ar-papaj-01
+  image_repo_name: ar-zizi-02
   cicd_attribute_repository: Matcham89/appdev-infra
   app_attribute_repository: Matcham89/appdev-application
-  state_bucket: "bkt-papaj-01-papaj-cicd-01"
+  state_bucket: "bkt-zizi-02-zizi-cicd-012"
   monitor_alerts_email: chris.matcham@appsbroker.com
-  resource_name: papaj-webapp
+  resource_name: zizi-webapp

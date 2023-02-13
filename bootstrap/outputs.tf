@@ -115,6 +115,7 @@ output "keyring_location" {
 
 output "key_version" {
   value = data.google_kms_crypto_key_version.version.version
+  sensitive = false
 }
 
 output "monitor_alerts_email" {
