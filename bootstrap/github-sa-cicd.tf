@@ -25,6 +25,7 @@ resource "google_project_iam_member" "github_actions_access_cicd" {
     "roles/iam.serviceAccountKeyAdmin",
     "roles/iam.serviceAccountUser",
     "roles/storage.objectAdmin",
+    "roles/cloudkms.viewer"
 
   ])
 }
@@ -55,7 +56,8 @@ resource "google_project_iam_member" "github_actions_access_cicd_dev" {
     "roles/binaryauthorization.attestorsAdmin",
     "roles/run.viewer",
     "roles/bigquery.dataEditor",
-    "roles/monitoring.notificationChannelEditor"
+    "roles/monitoring.notificationChannelEditor",
+    "roles/cloudkms.viewer"
   ])
 }
 
