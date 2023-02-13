@@ -206,10 +206,11 @@ CICD_SERVICE_ACCOUNT: $CICD_SERVICE_ACCOUNT
 STATE_BUCKET: $STATE_BUCKET
 DEV_PROJECT_ID: $DEV_PROJECT_ID
 DEV_PROJECT_NUMBER: $DEV_PROJECT_NUMBER
+RESOURCE_CLOUD_RUN: $resource_name
 EOF
 
 # Set github secrets for iac
-gh secret set -f .env
+gh secret set -f .env -R $cicd_attribute_repository
 
 echo "Running cloud run deployment"
 gcloud run deploy $resource_name \
@@ -250,14 +251,16 @@ fi
 echo "Terraform apply"
 terraform apply ./.plan
 
+# Set github secrets for app
 cat <<EOF > .env
 DEV_WORKLOAD_IDENTITY_PROVIDER: $DEV_WORKLOAD_IDENTITY_PROVIDER
 DEV_SERVICE_ACCOUNT: $DEV_SERVICE_ACCOUNT
-RESOURCE_CLOUD_RUN: $resource_name
+STATE_BUCKET: $STATE_BUCKET
+DEV_PROJECT_ID: $DEV_PROJECT_ID
+DEV_PROJECT_NUMBER: $DEV_PROJECT_NUMBER
 EOF
 
-# Set github secrets for app
-gh secret set -f .env
+gh secret set -f .env -R $app_attribute_repository
 
 # Remove no longer needed files
 echo "Remove Terraform state lock and State file"

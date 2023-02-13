@@ -74,3 +74,13 @@ resource "google_project_iam_member" "binary_cicd_access" {
   ])
 }
 
+resource "google_project_iam_member" "binary_cicd_access" {
+  project = local.cicd_project_id
+  member  = "serviceAccount:service-${data.google_project.project_id.number}@gcp-sa-binaryauthorization.iam.gserviceaccount.com"
+  role    = each.value
+
+  for_each = toset([
+    "roles/binaryauthorization.policyViewer",
+    "roles/binaryauthorization.attestorsVerifier",
+  ])
+}
