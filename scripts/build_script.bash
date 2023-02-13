@@ -104,8 +104,6 @@ gcloud projects add-iam-policy-binding $cicd_project_id \
 gcloud projects add-iam-policy-binding $dev_project_id \
     --member=user:$admin_user_account --role=roles/iam.workloadIdentityPoolAdmin  \
 
-
-
 # Enable billing for the newly created projects
 gcloud beta billing accounts list
 echo "Please provide the billing account 'ACCOUNT_ID' for the projects"
@@ -193,13 +191,14 @@ if [[ $success_response == "n" ]]; then
  terraform apply ./.plan
 fi 
 
-
+# Define vars for github secrets
 CICD_WORKLOAD_IDENTITY_PROVIDER=$(terraform output -raw provider_full_id_cicd)
 CICD_SERVICE_ACCOUNT=$(terraform output -raw github_service_account_cicd)
 STATE_BUCKET=$(terraform output -raw STATE_BUCKET)
 DEV_PROJECT_ID=$(terraform output -raw dev_project_id)
 DEV_PROJECT_NUMBER=$(terraform output -raw dev_project_number)  
 
+# Create .env file for github secrets
 cat <<EOF > .env
 CICD_WORKLOAD_IDENTITY_PROVIDER: $CICD_WORKLOAD_IDENTITY_PROVIDER
 CICD_SERVICE_ACCOUNT: $CICD_SERVICE_ACCOUNT
@@ -212,6 +211,7 @@ EOF
 # Set github secrets for iac
 gh secret set -f .env -R $cicd_attribute_repository
 
+# Deploy cloud run basic app
 echo "Running cloud run deployment"
 gcloud run deploy $resource_name \
 --image us-docker.pkg.dev/cloudrun/container/hello \
@@ -246,6 +246,25 @@ read terrafrom_plan_response
 
 if [[ $terrafrom_plan_response == "y" ]]; then 
  echo "Terrafrom Apply will now run!"
+elif [[ $terrafrom_plan_response == "n" ]] then
+ echo "Please update terraform file to resolve issues"
+fi 
+
+if [[ $terrafrom_plan_response == "n" ]]; then 
+ echo "Terraform plan"
+ terraform plan -out ./.plan
+fi
+
+echo "Please review the Terraform plan"
+
+echo "Is the plan correct? (y/n)"
+read terrafrom_plan_response
+
+if [[ $terrafrom_plan_response == "y" ]]; then 
+ echo "Terrafrom Apply will now run!"
+elif [[ $terrafrom_plan_response == "n" ]] then
+ echo "The service will now close"
+ exit
 fi 
 
 echo "Terraform apply"
@@ -260,6 +279,7 @@ DEV_PROJECT_ID: $DEV_PROJECT_ID
 DEV_PROJECT_NUMBER: $DEV_PROJECT_NUMBER
 EOF
 
+# Set github secrets on application repo
 gh secret set -f .env -R $app_attribute_repository
 
 # Remove no longer needed files
