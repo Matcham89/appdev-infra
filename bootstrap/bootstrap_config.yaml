@@ -1,9 +1,9 @@
-  cicd_project_id: deku-cicd-89 
-  dev_project_id: deku-dev-89
+  cicd_project_id: banjo-cicd-89 
+  dev_project_id: banjo-dev-89
   default_region: europe-west2
-  image_repo_name: ar-deku-89
+  image_repo_name: ar-banjo-89
   cicd_attribute_repository: Matcham89/appdev-infra
   app_attribute_repository: Matcham89/appdev-application
-  state_bucket: "bkt-deku-89-deku-cicd-89-deku-cicd-89"
+  state_bucket: "bkt-banjo-89-banjo-cicd-89"
   monitor_alerts_email: chris.matcham@appsbroker.com
-  resource_name: deku-webapp
+  resource_name: banjo-webapp

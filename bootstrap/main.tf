@@ -43,7 +43,8 @@ resource "google_project_service" "enable_artifact_apis_dev" {
     "cloudresourcemanager.googleapis.com",
     "cloudtasks.googleapis.com",
     "bigquerydatatransfer.googleapis.com",
-    "binaryauthorization.googleapis.com"
+    "binaryauthorization.googleapis.com",
+    "vpcaccess.googleapis.com"
   ])
   service                    = each.value
   disable_dependent_services = true

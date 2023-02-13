@@ -12,13 +12,16 @@ resource "google_compute_network" "vpc" {
 
 resource "google_compute_subnetwork" "subnet" {
   name          = "vpc-subnet-${var.project_id}"
-  ip_cidr_range = "10.2.0.0/25"
+  project       = var.project_id
+  ip_cidr_range = "10.2.0.0/28"
   region        = local.default_region
   network       = google_compute_network.vpc.id
 }
 
 resource "google_vpc_access_connector" "connector" {
-  name = "vpc-connector-${var.project_id}"
+  name    = "con-${var.project_id}"
+  region  = local.default_region
+  project = var.project_id
   subnet {
     name = google_compute_subnetwork.subnet.name
   }

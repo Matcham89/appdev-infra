@@ -227,19 +227,6 @@ rm -rf .terraform
 rm .plan
 rm .env
 
-# Bootstrap is now complete
-echo "The bootstrap is now complete."
-echo "Please proceed to populate notifacation channels"
-echo "Has the above been completed (y/n)"
-read notifacation_done
-
-if [[ $notifacation_done == "y" ]]; then 
- echo "Please continue"
-fi 
-
-if [[ $notifacation_done == "n" ]]; then 
- echo "This must be completed before proceeding"
-fi 
 
 # Change dir to iac
 cd ../iac
