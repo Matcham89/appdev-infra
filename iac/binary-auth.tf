@@ -26,6 +26,6 @@ data "google_kms_key_ring" "my_key_ring" {
 }
 
 data "google_kms_crypto_key_version" "my_crypto_key_version" {
-  crypto_key = data.google_kms_key_ring.my_key_ring.id
+  crypto_key = "${local.cicd_project_id}/${local.default_region}/${local.keyring_name}/${local.key_name}"
   version    = "1"
 }
