@@ -1,9 +1,9 @@
-  cicd_project_id: jsteat-cicd-01 
-  dev_project_id: jsteat-dev-01
+  cicd_project_id: keys-cicd-012 
+  dev_project_id: keys-dev-012
   default_region: europe-west2
-  image_repo_name: ar-jstest-01
+  image_repo_name: ar-keys-012
   cicd_attribute_repository: Matcham89/appdev-infra
   app_attribute_repository: Matcham89/appdev-application
-  state_bucket: "bkt-jstest-01-jsteat-cicd-01"
+  state_bucket: "bkt-keys-012-keys-cicd-012"
   monitor_alerts_email: chris.matcham@appsbroker.com
-  resource_name: jsteat-webapp
+  resource_name: keys-webapp

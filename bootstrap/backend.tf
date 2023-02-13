@@ -1,6 +1,6 @@
 terraform {
   backend "gcs" {
-    bucket = "bkt-jstest-01-jsteat-cicd-01"
+    bucket = "bkt-keys-012-keys-cicd-012"
     prefix = "bootstrap"
   }
 }
