@@ -59,7 +59,7 @@ resource "google_project_iam_member" "cloudrun_cicd_access" {
     "roles/artifactregistry.admin"
   ])
   depends_on = [
-    
+
   ]
 }
 
