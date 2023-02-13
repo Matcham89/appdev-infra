@@ -43,19 +43,34 @@ resource "google_project_iam_member" "sa_cr_access" {
 
 
 
+
 ###################################################
-######## Cloud Run robot Service Account ##########
+############## Robot Service Account ##############
 ###################################################
 
 
 resource "google_project_iam_member" "cloudrun_cicd_access" {
   project = local.cicd_project_id
-  member  = "serviceAccount:service-${var.project_number}@serverless-robot-prod.iam.gserviceaccount.com"
+  member  = "serviceAccount:service-${data.google_project.project_id.number}@serverless-robot-prod.iam.gserviceaccount.com"
   role    = each.value
 
   for_each = toset([
     "roles/artifactregistry.reader",
     "roles/artifactregistry.admin"
+  ])
+  depends_on = [
+    
+  ]
+}
+
+resource "google_project_iam_member" "binary_cicd_access" {
+  project = local.cicd_project_id
+  member  = "serviceAccount:service-${data.google_project.project_id.number}@gcp-sa-binaryauthorization.iam.gserviceaccount.com"
+  role    = each.value
+
+  for_each = toset([
+    "roles/binaryauthorization.policyViewer",
+    "roles/binaryauthorization.attestorsVerifier",
   ])
 }
 

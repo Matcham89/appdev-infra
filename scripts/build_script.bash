@@ -160,7 +160,6 @@ locals {
   keyring_name         = data.terraform_remote_state.bootstrap.outputs.keyring_name
   key_name             = data.terraform_remote_state.bootstrap.outputs.key_name
   keyring_location     = data.terraform_remote_state.bootstrap.outputs.keyring_location
-  key_version          = data.terraform_remote_state.bootstrap.outputs.key_version
   resource_name        = data.terraform_remote_state.bootstrap.outputs.resource_name
 }
 EOF
@@ -250,9 +249,6 @@ fi
 
 echo "Terraform apply"
 terraform apply ./.plan
-
-WORKLOAD_IDENTITY_PROVIDER=$(terraform output -raw provider_full_id_dev)
-SERVICE_ACCOUNT=$(terraform output -raw github_service_account_dev)
 
 cat <<EOF > .env
 DEV_WORKLOAD_IDENTITY_PROVIDER: $DEV_WORKLOAD_IDENTITY_PROVIDER
