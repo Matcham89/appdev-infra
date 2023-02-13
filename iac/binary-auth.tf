@@ -37,7 +37,7 @@ data "google_kms_crypto_key_version" "my_crypto_key_version" {
 
 resource "google_kms_crypto_key_iam_binding" "crypto_key" {
   project       = local.cicd_project_id
-  crypto_key_id = data.google_kms_crypto_key.my_key.self_link
+  crypto_key_id = data.google_kms_crypto_key.my_key.id
   role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
 
   members = [
