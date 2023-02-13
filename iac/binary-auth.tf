@@ -34,12 +34,3 @@ data "google_kms_crypto_key_version" "my_crypto_key_version" {
   crypto_key = data.google_kms_crypto_key.my_key.id
   version    = "1"
 }
-
-resource "google_kms_crypto_key_iam_binding" "crypto_key" {
-  crypto_key_id = data.google_kms_crypto_key.my_key.id
-  role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
-
-  members = [
-    "serviceAccount:service-${data.google_project.project_id.number}@compute-system.iam.gserviceaccount.com",
-  ]
-}
