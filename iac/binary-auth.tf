@@ -20,6 +20,7 @@ resource "google_binary_authorization_policy" "policy" {
 }
 
 data "google_kms_key_ring" "my_key_ring" {
+  project  = local.cicd_project_id
   name     = local.keyring_name
   location = local.default_region
 }
