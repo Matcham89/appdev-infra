@@ -1,15 +1,19 @@
 #!/bin/bash
 
-function delete_folder()
+function delete_subfolders()
 {
-    local parent_folder=$1
+    local current_folder=$1
 
-    folders=$( gcloud resource-manager folders list --folder="$parent_folder" --format='value(name)' )
+    # Delete projects directly under current folder
+    delete_project $current_folder
 
-    for folder in $folders
+    # Fetch list of subfolders
+    subfolders=$( gcloud resource-manager folders list --folder="$current_folder" --format='value(name)' )
+
+    # Iterate over each subfolder, deleting projects and subfolders
+    for folder in $subfolders
     do 
-        delete_project $folder
-        delete_folder $folder
+        delete_subfolders $folder
         echo "Deleting folder: $folder"
         gcloud resource-manager folders delete $folder --quiet
     done
@@ -17,9 +21,9 @@ function delete_folder()
 
 function delete_project()
 {
-    local parent_folder=$1
+    local current_folder=$1
 
-    projects=$( gcloud projects list --filter="parent.id=$parent_folder" --format='value(projectId)' )
+    projects=$( gcloud projects list --filter="parent.id=$current_folder" --format='value(projectId)' )
 
     for project in $projects
     do 
@@ -42,5 +46,6 @@ function delete_project_lien()
     done
 }
 
-# Delete all folders and projects under the PENDING DELETION folder (Folder ID 543916537772)
-delete_folder "1029706125675"
+# Delete all subfolders and projects under folder ID "XXXXX"
+folder_id="1029706125675"
+delete_subfolders $folder_id
