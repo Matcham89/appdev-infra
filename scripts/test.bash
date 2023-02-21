@@ -1,11 +1,7 @@
-# Confirm if applied correctly
-echo "Did the apply succeed ? (y/n)"
-read success_response
-
-if [[ $success_response == "n" ]]; then 
- echo "Terrafrom Apply will now run!"
- terraform plan -out ./.plan
- terraform apply ./.plan
-elif [[ $success_response == "y" ]]; then 
- echo "Please continue"
-fi 
+state_bucket_present=$(gcloud storage buckets list --project mm-cicd-2020 | grep bkt-mm-2020)
+# Create storage bucket
+if [[ -n "$state_bucket_present" ]]; then
+gcloud storage buckets create gs://$state_bucket --project $cicd_project_id --location $default_region
+else
+  echo "Storage Bucket Present"
+fi

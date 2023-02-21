@@ -1,6 +1,6 @@
-terraform {
+  terraform {
   backend "gcs" {
-    bucket = "bkt-voxis-012-voxis-cicd-012"
+    bucket = "bkt-mm-2020"
     prefix = "bootstrap"
+   }
   }
-}

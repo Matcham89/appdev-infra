@@ -19,7 +19,7 @@ resource "google_compute_subnetwork" "subnet" {
 }
 
 resource "google_vpc_access_connector" "connector" {
-  name    = "con-${var.project_id}"
+  name    = "vpc-con-${var.project_id}"
   region  = local.default_region
   project = var.project_id
   subnet {
@@ -40,7 +40,7 @@ resource "google_compute_region_network_endpoint_group" "serverless_neg" {
   project               = var.project_id
   region                = local.default_region
   cloud_run {
-    service = local.resource_name
+    service = data.google_cloud_run_service.cr_data.name
   }
 }
 
@@ -48,9 +48,9 @@ resource "google_compute_region_network_endpoint_group" "serverless_neg" {
 # ######## Serverless External Load Balancer ############
 # #######################################################
 
-# data "google_compute_ssl_certificate" "createlift-cert" {
+# data "google_compute_ssl_certificate" "mlab-certificate" {
 #   project = var.project_id
-#   name    = "application-certificate"
+#   name    = "mlab-certificate"
 # }
 
 
@@ -68,7 +68,7 @@ module "lb-http" {
 
   # ssl                  = true
   # use_ssl_certificates = true
-  # ssl_certificates     = ["${data.google_compute_ssl_certificate.createlift-cert.self_link}"]
+  # ssl_certificates     = ["${data.google_compute_ssl_certificate.mlab-certificate.self_link}"]
   # https_redirect       = true
 
   address = google_compute_address.glb_static.address

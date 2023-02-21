@@ -1,11 +1,23 @@
 #!/bin/bash
+source bootstrap_config.sh
+
+# Install jq
+if ! command -v jq &> /dev/null; then
+    echo "Please install jq"
+fi
+
+# Install gh
+if ! command -v gh &> /dev/null; then
+    echo "Please install gh"
+fi
+
+# Install gcloud
+if ! command -v gcloud &> /dev/null; then
+    echo "Please install gcloud"
+fi
 
 # Prompt
 echo "Please ensure you are working on a clean branch off of 'main'"
-
-# Provide google admin credentials
-echo "Please provide the google cloud admin account being used (my-account@google.com)"
-read admin_user_account
 
 # Log in to google cloud
 echo "Are you ready to log into Google Cloud (y/n)?"
@@ -21,18 +33,6 @@ if [[ $login_response == "y" ]]; then
   gh auth login
 fi
 
-# Set name of the company
-echo "Please enter the company name for the project"
-read company_name
-
-#Set the default region for the project
-echo "Please enter the default region for the project (europe-west2)"
-select default_region in europe-west1 europe-west2 europe-west3
-do 
-  echo $default_region
-  break
-done
-
 # Create projects (y/n)
 echo "Do the projects need to be created? (y/n)"
 read create_project 
@@ -43,49 +43,13 @@ if [[ $create_project == "y" ]]; then
   read project_level
 fi
 
-if [[ $project_level == "org" ]]; then 
-  echo "Please provide the organization id number"
-  read organization_id
-elif [[ $project_level == "fld" ]]; then 
-  echo "Please provide the folder id"
-  read folder_id
-fi 
-
-# Name the CICD project
-echo 'Please name the CICD project'
-read cicd_project_id
-echo "The CICD project will be name $cicd_project_id"
-
-# Name the Dev project name
-echo 'Please name the Dev project'
-read dev_project_id
-echo "The Dev project will be name $dev_project_id"
-
-# Echo the project names if they dont need to be created
-if [[ $create_project == "n" ]]; then
-  echo "The name of the CICD project is $cicd_project_id and Dev project is $dev_project_id"
-fi 
-
-# Set name of the storage bucker for state files
-echo "Please enter the name of the state file storage bucket to be deployed"
-read state_bucket
-
-# Set the name of the artifact repo
-echo "Please enter the name of the artifact registry repo"
-read image_repo_name
-
-# Enter the ID of the GitHub repo for the Infrastructure
-echo "Please enter the id of the GitHub repo for the infrastructure (OWNER/REPO)"
-read cicd_attribute_repository
-
-# Enter the ID of the GitHub repo for the Application
-echo "Please enter the id of the GitHub repo for the infrastructure (OWNER/REPO)"
-read app_attribute_repository
-
-# Prepare cloud run for iac deployment
-echo "In order to proceed, cloud run must deploy a template."
-echo "Please provide the name for the Cloud Run resource"
-read resource_name
+if [[ "$folder_id" != "" && $create_project == "y" ]]; then
+  gcloud projects create $cicd_project_id --folder=$folder_id
+  gcloud projects create $dev_project_id --folder=$folder_id
+elif [[ "$organization_id" != "" && $create_project == "y" ]]; then
+  gcloud projects create $cicd_project_id --organization=$organization_id
+  gcloud projects create $dev_project_id --organization=$organization_id
+fi
 
 # Create the provided projects
 if [[ $project_level == "org" && $create_project == "y" ]]; then 
@@ -96,23 +60,27 @@ elif [[ $project_level == "fld" && $create_project == "y" ]]; then
   gcloud projects create $dev_project_id --folder=$folder_id
 fi 
 
-# Enable required workload id permission
-gcloud projects add-iam-policy-binding $cicd_project_id \
-    --member=user:$admin_user_account --role=roles/iam.workloadIdentityPoolAdmin  \
+# # Enable required workload id permission
+# gcloud projects add-iam-policy-binding $cicd_project_id \
+#     --member=user:$admin_user_account --role=roles/iam.workloadIdentityPoolAdmin  \
 
-# Enable required workload id permission
-gcloud projects add-iam-policy-binding $dev_project_id \
-    --member=user:$admin_user_account --role=roles/iam.workloadIdentityPoolAdmin  \
+# # Enable required workload id permission
+# gcloud projects add-iam-policy-binding $dev_project_id \
+#     --member=user:$admin_user_account --role=roles/iam.workloadIdentityPoolAdmin  \
 
 # Enable billing for the newly created projects
-gcloud beta billing accounts list
-echo "Please provide the billing account 'ACCOUNT_ID' for the projects"
-read billing_account
+
 gcloud beta billing projects link $cicd_project_id --billing-account $billing_account
 gcloud beta billing projects link $dev_project_id --billing-account $billing_account
 
+
+state_bucket_present=$(gcloud storage buckets list --project mm-cicd-2020 | grep $state_bucket)
 # Create storage bucket
-gcloud storage buckets create gs://$state_bucket-$cicd_project_id --project $cicd_project_id --location $default_region
+if [[ -z "$state_bucket_present" ]]; then
+gcloud storage buckets create gs://$state_bucket --project $cicd_project_id --location $default_region
+else
+  echo "Storage Bucket Present"
+fi
 
 # Output the variables to a YAML file to be used in the bootstrap
 cd bootstrap
@@ -123,8 +91,8 @@ cat <<EOF > bootstrap_config.yaml
   image_repo_name: $image_repo_name
   cicd_attribute_repository: $cicd_attribute_repository
   app_attribute_repository: $app_attribute_repository
-  state_bucket: "${state_bucket}-${cicd_project_id}"
-  monitor_alerts_email: $admin_user_account
+  state_bucket: $state_bucket
+  monitor_alerts_email: $monitor_alerts_email
   resource_name: $resource_name
 EOF
 
@@ -132,7 +100,7 @@ EOF
 cat <<EOF > backend.tf
   terraform {
   backend "gcs" {
-    bucket = "${state_bucket}-${cicd_project_id}"
+    bucket = "$state_bucket"
     prefix = "bootstrap"
    }
   }
@@ -144,7 +112,7 @@ cat <<EOF > remote_states.tf
 data "terraform_remote_state" "bootstrap" {
   backend = "gcs"
   config = {
-    bucket = "${state_bucket}-${cicd_project_id}"
+    bucket = "$state_bucket"
     prefix = "bootstrap"
   }
 }
@@ -217,7 +185,7 @@ gcloud run deploy $resource_name \
 --image us-docker.pkg.dev/cloudrun/container/hello \
 --allow-unauthenticated \
 --ingress all \
---region europe-west2 \
+--region $default_region \
 --project $dev_project_id
 
 # Remove no longer needed files
@@ -231,10 +199,10 @@ rm .env
 # Change dir to iac
 cd ../iac
 
-export TF_VAR_project_id=$dev_project_id
-export TF_VAR_project_number=$dev_project_number
+export TF_VAR_project_id=$DEV_PROJECT_ID
+export TF_VAR_project_number=$DEV_PROJECT_NUMBER
 echo "Terraform init"
-terraform init -backend-config="bucket=${state_bucket}-${cicd_project_id}" -backend-config="prefix=dev"
+terraform init -backend-config="bucket=$state_bucket" -backend-config="prefix=dev"
 
 echo "Terraform plan"
 terraform plan -out ./.plan
@@ -246,25 +214,8 @@ read terrafrom_plan_response
 
 if [[ $terrafrom_plan_response == "y" ]]; then 
  echo "Terrafrom Apply will now run!"
-elif [[ $terrafrom_plan_response == "n" ]] then
+elif [[ $terrafrom_plan_response == "n" ]]; then
  echo "Please update terraform file to resolve issues"
-fi 
-
-if [[ $terrafrom_plan_response == "n" ]]; then 
- echo "Terraform plan"
- terraform plan -out ./.plan
-fi
-
-echo "Please review the Terraform plan"
-
-echo "Is the plan correct? (y/n)"
-read terrafrom_plan_response
-
-if [[ $terrafrom_plan_response == "y" ]]; then 
- echo "Terrafrom Apply will now run!"
-elif [[ $terrafrom_plan_response == "n" ]] then
- echo "The service will now close"
- exit
 fi 
 
 echo "Terraform apply"
@@ -277,10 +228,12 @@ DEV_SERVICE_ACCOUNT: $DEV_SERVICE_ACCOUNT
 STATE_BUCKET: $STATE_BUCKET
 DEV_PROJECT_ID: $DEV_PROJECT_ID
 DEV_PROJECT_NUMBER: $DEV_PROJECT_NUMBER
+IMAGE_NAME: $resource_name
 EOF
 
 # Set github secrets on application repo
 gh secret set -f .env -R $app_attribute_repository
+
 
 # Remove no longer needed files
 echo "Remove Terraform state lock and State file"
@@ -288,3 +241,4 @@ rm .terraform.lock.hcl
 rm -rf .terraform
 rm .plan
 rm .env
+

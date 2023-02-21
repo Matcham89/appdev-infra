@@ -1,9 +1,9 @@
-  cicd_project_id: voxis-cicd-012 
-  dev_project_id: voxis-dev-012
+  cicd_project_id: mm-cicd-2020 
+  dev_project_id: mm-dev-2020
   default_region: europe-west2
-  image_repo_name: ar-voxis-012
+  image_repo_name: ar-mm-2020
   cicd_attribute_repository: Matcham89/appdev-infra
   app_attribute_repository: Matcham89/appdev-application
-  state_bucket: "bkt-voxis-012-voxis-cicd-012"
+  state_bucket: bkt-mm-2020
   monitor_alerts_email: chris.matcham@appsbroker.com
-  resource_name: cr-voxi-webapp
+  resource_name: cr-mm-webapp
