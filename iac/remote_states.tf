@@ -16,4 +16,5 @@ locals {
   key_name             = data.terraform_remote_state.bootstrap.outputs.key_name
   keyring_location     = data.terraform_remote_state.bootstrap.outputs.keyring_location
   resource_name        = data.terraform_remote_state.bootstrap.outputs.resource_name
+  key_version          = data.terraform_remote_state.bootstrap.outputs.key_version
 }

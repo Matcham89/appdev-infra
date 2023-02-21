@@ -113,10 +113,9 @@ output "keyring_location" {
   value = google_kms_key_ring.keyring.location
 }
 
-# output "key_version" {
-#   value     = data.google_kms_crypto_key_version.version.version
-#   sensitive = false
-# }
+output "key_version" {
+  value = data.google_kms_crypto_key_version.version.version
+}
 
 output "monitor_alerts_email" {
   value = local.monitor_alerts_email

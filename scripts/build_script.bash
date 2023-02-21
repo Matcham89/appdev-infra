@@ -127,6 +127,7 @@ locals {
   key_name             = data.terraform_remote_state.bootstrap.outputs.key_name
   keyring_location     = data.terraform_remote_state.bootstrap.outputs.keyring_location
   resource_name        = data.terraform_remote_state.bootstrap.outputs.resource_name
+  key_version          = data.terraform_remote_state.bootstrap.outputs.key_version
 }
 EOF
 
@@ -164,7 +165,9 @@ CICD_WORKLOAD_IDENTITY_PROVIDER=$(terraform output -raw provider_full_id_cicd)
 CICD_SERVICE_ACCOUNT=$(terraform output -raw github_service_account_cicd)
 STATE_BUCKET=$(terraform output -raw STATE_BUCKET)
 DEV_PROJECT_ID=$(terraform output -raw dev_project_id)
-DEV_PROJECT_NUMBER=$(terraform output -raw dev_project_number)  
+DEV_PROJECT_NUMBER=$(terraform output -raw dev_project_number) 
+DEV_WORKLOAD_IDENTITY_PROVIDER=$(terraform output -raw provider_full_id_dev)
+DEV_SERVICE_ACCOUNT=$(terraform output -raw github_service_account_dev)
 
 # Create .env file for github secrets
 cat <<EOF > .env
@@ -242,3 +245,59 @@ rm -rf .terraform
 rm .plan
 rm .env
 
+# Plan for application deployment
+echo "Have you cloned the application repo and provided the 'app_attribute_repository'? (y/n)"
+read app_repo_response
+
+if [[ $app_repo_response == "y" ]]; then 
+ echo "Application Development Workflow will now run!"
+elif [[ $app_repo_response == "n" ]]; then
+ echo "The build tool will now exit, please continue deployment through github actions."
+ exit
+fi 
+
+# Run the application dev deployment workflow
+gh workflow run dev_deployment.yml -R $app_attribute_repository
+
+# Set workflow ID
+WORKFLOW_ID=$(gh api -X GET /repos/$OWNER/$REPO/actions/workflows | jq '.workflows[] | select(.name == "cd-workflow") | .id')
+
+for (( ; ; ))
+do 
+  WORKFLOW_STATUS=$(gh run list -R $app_attribute_repository --json status,databaseId,name,number | jq '.[0] | select(.status == "in_progress") | .status')
+done
+
+while [ $WORKFLOW_STATUS= "in_progress" ]
+do
+   gh run list -R $app_attribute_repository
+done
+
+# Set workflow status
+WORKFLOW_STATUS=$(gh run list -R $app_attribute_repository --json status,databaseId,name,number | jq '.[0] | .status')
+echo $WORKFLOW_STATUS
+
+# Show status of workflow in terminal until complete
+while [[ $WORKFLOW_STATUS == '"in_progress"' ]] || [[ $WORKFLOW_STATUS == '"queued"' ]] ; do
+   gh run list -R $app_attribute_repository
+   WORKFLOW_STATUS=$(gh run list -R $app_attribute_repository --json status,databaseId,name,number | jq '.[0] | .status')
+done
+
+# When workflow complete echo complete
+if [[ $WORKFLOW_STATUS == '"completed"' ]]; then
+  echo "Workflow has completed"
+fi
+
+# Show the application dev deployment workflow running
+echo "You can see the action below"
+echo "https://github.com/$app_attribute_repository/actions"
+
+# Complete build
+echo "Build is now complete, are you ready to exit? (y/n)"
+read exit_response
+
+if [[ $exit_response == "y" ]]; then 
+ echo "Thankyou - tool will now exit"
+elif [[ $exit_response == "n" ]]; then
+ echo "No further steps to be performed - tool will now exit"
+ exit
+fi 
