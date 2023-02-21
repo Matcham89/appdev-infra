@@ -259,6 +259,8 @@ fi
 # Run the application dev deployment workflow
 gh workflow run dev_deployment.yml -R $app_attribute_repository
 
+echo "Deploying"
+sleep 3
 
 # Set workflow status
 WORKFLOW_STATUS=$(gh run list -R $app_attribute_repository --json status,databaseId,name,number | jq '.[0] | .status')
