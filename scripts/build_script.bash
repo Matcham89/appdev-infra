@@ -259,18 +259,6 @@ fi
 # Run the application dev deployment workflow
 gh workflow run dev_deployment.yml -R $app_attribute_repository
 
-# Set workflow ID
-WORKFLOW_ID=$(gh api -X GET /repos/$app_attribute_repository/actions/workflows | jq '.workflows[] | select(.name == "cd-workflow") | .id')
-
-for (( ; ; ))
-do 
-  WORKFLOW_STATUS=$(gh run list -R $app_attribute_repository --json status,databaseId,name,number | jq '.[0] | select(.status == "in_progress") | .status')
-done
-
-while [ $WORKFLOW_STATUS= "in_progress" ]
-do
-   gh run list -R $app_attribute_repository
-done
 
 # Set workflow status
 WORKFLOW_STATUS=$(gh run list -R $app_attribute_repository --json status,databaseId,name,number | jq '.[0] | .status')
@@ -280,6 +268,7 @@ echo $WORKFLOW_STATUS
 while [[ $WORKFLOW_STATUS == '"in_progress"' ]] || [[ $WORKFLOW_STATUS == '"queued"' ]] ; do
    gh run list -R $app_attribute_repository
    WORKFLOW_STATUS=$(gh run list -R $app_attribute_repository --json status,databaseId,name,number | jq '.[0] | .status')
+   echo $WORKFLOW_STATUS
 done
 
 # When workflow complete echo complete
