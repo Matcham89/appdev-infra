@@ -260,7 +260,7 @@ fi
 gh workflow run dev_deployment.yml -R $app_attribute_repository
 
 # Set workflow ID
-WORKFLOW_ID=$(gh api -X GET /repos/$OWNER/$REPO/actions/workflows | jq '.workflows[] | select(.name == "cd-workflow") | .id')
+WORKFLOW_ID=$(gh api -X GET /repos/$app_attribute_repository/actions/workflows | jq '.workflows[] | select(.name == "cd-workflow") | .id')
 
 for (( ; ; ))
 do 
