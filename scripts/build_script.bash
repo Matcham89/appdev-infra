@@ -53,13 +53,13 @@ elif [[ "$organization_id" != "" && $create_project == "y" ]]; then
 fi
 
 
-# # Enable required workload id permission
-# gcloud projects add-iam-policy-binding $cicd_project_id \
-#     --member=user:$admin_user_account --role=roles/iam.workloadIdentityPoolAdmin  \
+# Enable required workload id permission
+gcloud projects add-iam-policy-binding $cicd_project_id \
+    --member=user:$monitor_alerts_email --role=roles/iam.workloadIdentityPoolAdmin  \
 
-# # Enable required workload id permission
-# gcloud projects add-iam-policy-binding $dev_project_id \
-#     --member=user:$admin_user_account --role=roles/iam.workloadIdentityPoolAdmin  \
+# Enable required workload id permission
+gcloud projects add-iam-policy-binding $dev_project_id \
+    --member=user:$monitor_alerts_email --role=roles/iam.workloadIdentityPoolAdmin  \
 
 # Enable billing for the newly created projects
 
@@ -144,7 +144,7 @@ echo "Terraform apply"
 terraform apply ./.plan
 
 # Confirm if applied correctly
-echo "Did the apply succeed ? (y/n)"
+echo "Did the apply succeed? (possible fail due to api timing) (y/n)"
 read success_response
 
 if [[ $success_response == "n" ]]; then 
@@ -212,6 +212,7 @@ if [[ $terrafrom_plan_response == "y" ]]; then
  echo "Terrafrom Apply will now run!"
 elif [[ $terrafrom_plan_response == "n" ]]; then
  echo "Please update terraform file to resolve issues"
+ exit
 fi 
 
 echo "Terraform apply"
@@ -278,17 +279,11 @@ fi
 echo "You can see the action below"
 echo "https://github.com/$app_attribute_repository/actions"
 
-echo "Application"
+echo "Waiting for the application to settle"
+sleep 10
+echo "Welcome to the application"
 curl $LOAD_BALANCER_IP
+echo http://$LOAD_BALANCER_IP
 
 # Complete build
-echo "Build is now complete, are you ready to exit? (y/n)"
-read exit_response
-
-if [[ $exit_response == "y" ]]; then 
- echo "Thankyou - exit"
- exit
-elif [[ $exit_response == "n" ]]; then
- echo "No further steps to be performed - exit"
- exit
-fi 
+echo "Build is now complete"

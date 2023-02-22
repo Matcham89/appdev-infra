@@ -19,13 +19,13 @@ resource "google_binary_authorization_policy" "policy" {
   }
 }
 
-data "google_kms_key_ring" "my_key_ring" {
-  project  = local.cicd_project_id
-  name     = local.keyring_name
-  location = local.default_region
-}
+# data "google_kms_key_ring" "my_key_ring" {
+#   project  = local.cicd_project_id
+#   name     = local.keyring_name
+#   location = local.default_region
+# }
 
-data "google_kms_crypto_key_version" "my_crypto_key_version" {
-  crypto_key = "${local.cicd_project_id}/${local.default_region}/${local.keyring_name}/${local.key_name}"
-  version    = "1"
-}
+# data "google_kms_crypto_key_version" "my_crypto_key_version" {
+#   crypto_key = "${local.cicd_project_id}/${local.default_region}/${local.keyring_name}/${local.key_name}"
+#   version    = "1"
+# }
