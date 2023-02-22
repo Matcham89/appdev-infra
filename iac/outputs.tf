@@ -58,3 +58,6 @@ output "TARGET_BUCKET" {
   value = google_storage_bucket.gcs.name
 }
 
+output "LOAD_BALANCER_IP" {
+  value = google_compute_global_address.glb_static.address
+}

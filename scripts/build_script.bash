@@ -43,6 +43,7 @@ if [[ $create_project == "y" ]]; then
   read project_level
 fi
 
+# Create the provided projects
 if [[ "$folder_id" != "" && $create_project == "y" ]]; then
   gcloud projects create $cicd_project_id --folder=$folder_id
   gcloud projects create $dev_project_id --folder=$folder_id
@@ -51,14 +52,6 @@ elif [[ "$organization_id" != "" && $create_project == "y" ]]; then
   gcloud projects create $dev_project_id --organization=$organization_id
 fi
 
-# Create the provided projects
-if [[ $project_level == "org" && $create_project == "y" ]]; then 
-  gcloud projects create $cicd_project_id --organization=$organization_id
-  gcloud projects create $dev_project_id --organization=$organization_id
-elif [[ $project_level == "fld" && $create_project == "y" ]]; then 
-  gcloud projects create $cicd_project_id --folder=$folder_id
-  gcloud projects create $dev_project_id --folder=$folder_id
-fi 
 
 # # Enable required workload id permission
 # gcloud projects add-iam-policy-binding $cicd_project_id \
@@ -74,7 +67,7 @@ gcloud beta billing projects link $cicd_project_id --billing-account $billing_ac
 gcloud beta billing projects link $dev_project_id --billing-account $billing_account
 
 
-state_bucket_present=$(gcloud storage buckets list --project mm-cicd-2020 | grep $state_bucket)
+state_bucket_present=$(gcloud storage buckets list --project $cicd_project_id | grep $state_bucket)
 # Create storage bucket
 if [[ -z "$state_bucket_present" ]]; then
 gcloud storage buckets create gs://$state_bucket --project $cicd_project_id --location $default_region
@@ -234,6 +227,9 @@ DEV_PROJECT_NUMBER: $DEV_PROJECT_NUMBER
 IMAGE_NAME: $resource_name
 EOF
 
+# Set ip address value of load balancer
+LOAD_BALANCER_IP=$(terraform output -raw LOAD_BALANCER_IP)
+
 # Set github secrets on application repo
 gh secret set -f .env -R $app_attribute_repository
 
@@ -282,13 +278,17 @@ fi
 echo "You can see the action below"
 echo "https://github.com/$app_attribute_repository/actions"
 
+echo "Application"
+curl $LOAD_BALANCER_IP
+
 # Complete build
 echo "Build is now complete, are you ready to exit? (y/n)"
 read exit_response
 
 if [[ $exit_response == "y" ]]; then 
- echo "Thankyou - tool will now exit"
+ echo "Thankyou - exit"
+ exit
 elif [[ $exit_response == "n" ]]; then
- echo "No further steps to be performed - tool will now exit"
+ echo "No further steps to be performed - exit"
  exit
 fi 

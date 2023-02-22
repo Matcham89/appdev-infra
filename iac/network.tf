@@ -55,9 +55,8 @@ resource "google_compute_region_network_endpoint_group" "serverless_neg" {
 
 
 
-resource "google_compute_address" "glb_static" {
+resource "google_compute_global_address" "glb_static" {
   name    = "glb-static-ip-address"
-  region  = local.default_region
   project = var.project_id
 }
 
@@ -70,8 +69,8 @@ module "lb-http" {
   # use_ssl_certificates = true
   # ssl_certificates     = ["${data.google_compute_ssl_certificate.mlab-certificate.self_link}"]
   # https_redirect       = true
-
-  address = google_compute_address.glb_static.address
+  create_address = false
+  address = google_compute_global_address.glb_static.address
   backends = {
     default = {
       description             = null
@@ -100,6 +99,9 @@ module "lb-http" {
       }
     }
   }
+  depends_on = [
+    google_compute_global_address.glb_static
+  ]
 }
 
 resource "google_compute_security_policy" "policy" {

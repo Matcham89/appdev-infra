@@ -1,9 +1,9 @@
-  cicd_project_id: mm-cicd-2020 
-  dev_project_id: mm-dev-2020
+  cicd_project_id: mm-cicd-2783 
+  dev_project_id: mm-dev-2783
   default_region: europe-west2
-  image_repo_name: ar-mm-2020
+  image_repo_name: ar-mm-2783
   cicd_attribute_repository: Matcham89/appdev-infra
   app_attribute_repository: Matcham89/appdev-application
-  state_bucket: bkt-mm-2020
+  state_bucket: bkt-mm-2783
   monitor_alerts_email: chris.matcham@appsbroker.com
   resource_name: cr-mm-webapp
