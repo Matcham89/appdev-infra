@@ -136,6 +136,10 @@ echo "Please review the Terraform plan"
 echo "Is the plan correct? (y/n)"
 read terrafrom_plan_response
 
+echo "Allowing time for the WIF api to enable"
+echo "Please wait"
+sleep 10
+
 if [[ $terrafrom_plan_response == "y" ]]; then 
  echo "Terrafrom Apply will now run!"
 fi 
