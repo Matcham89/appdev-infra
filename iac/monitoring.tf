@@ -84,17 +84,17 @@ resource "google_monitoring_alert_policy" "burn_rate_latency_policy" {
 
 ## Description
 
-There has been a 10% burn rate on the latency SLO error budget in the past 5 minutes on the [${data.google_cloud_run_service.cr_data.name}](https://console.cloud.google.com/run/detail/europe-west2/${data.google_cloud_run_service.cr_data.name}/metrics?project=${var.project_id}&supportedpurview=project)
+There has been a 10% burn rate on the latency SLO error budget in the past 5 minutes on the [${data.google_cloud_run_service.cr_data.name}](https://console.cloud.google.com/run/detail/${local.default_region}/${data.google_cloud_run_service.cr_data.name}/metrics?project=${var.project_id}&supportedpurview=project)
 
 ## Analysis
 
-- Check [GCP CloudRun metrics](https://console.cloud.google.com/run/detail/europe-west2/${data.google_cloud_run_service.cr_data.name}/metrics?${var.project_id}&supportedpurview=project)
-- Check [GCP Logs](https://console.cloud.google.com/run/detail/europe-west2/${data.google_cloud_run_service.cr_data.name}/logs?project=${var.project_id}&supportedpurview=project)
+- Check [GCP CloudRun metrics](https://console.cloud.google.com/run/detail/${local.default_region}/${data.google_cloud_run_service.cr_data.name}/metrics?${var.project_id}&supportedpurview=project)
+- Check [GCP Logs](https://console.cloud.google.com/run/detail/${local.default_region}/${data.google_cloud_run_service.cr_data.name}/logs?project=${var.project_id}&supportedpurview=project)
 
 ## Resolution
 
 - Check the [GCP Alerting Dashboard](https://console.cloud.google.com/monitoring/alerting?project=${var.project_id}&supportedpurview=project) to see if incident is still open or has self-healed
-- If issue persists consider reverting to previous [CloudRun Revision](https://console.cloud.google.com/run/detail/europe-west2/${data.google_cloud_run_service.cr_data.name}/revisions?project=${var.project_id}&supportedpurview=project)
+- If issue persists consider reverting to previous [CloudRun Revision](https://console.cloud.google.com/run/detail/${local.default_region}/${data.google_cloud_run_service.cr_data.name}/revisions?project=${var.project_id}&supportedpurview=project)
 
 EOT
     mime_type = "text/markdown"
@@ -132,17 +132,17 @@ resource "google_monitoring_alert_policy" "burn_rate_availability_policy" {
 
 ## Description
 
-There has been a 10% burn rate on the availability SLO error budget in the past 5 minutes on the [${data.google_cloud_run_service.cr_data.name}](https://console.cloud.google.com/run/detail/europe-west1/${data.google_cloud_run_service.cr_data.name}/metrics?project=${var.project_id}&supportedpurview=project)
+There has been a 10% burn rate on the availability SLO error budget in the past 5 minutes on the [${data.google_cloud_run_service.cr_data.name}](https://console.cloud.google.com/run/detail/${local.default_region}/${data.google_cloud_run_service.cr_data.name}/metrics?project=${var.project_id}&supportedpurview=project)
 
 ## Analysis
 
-- Check [GCP CloudRun metrics](https://console.cloud.google.com/run/detail/europe-west1/${data.google_cloud_run_service.cr_data.name}/metrics?${var.project_id}&supportedpurview=project)
-- Check [GCP Logs](https://console.cloud.google.com/run/detail/europe-west1/${data.google_cloud_run_service.cr_data.name}/logs?project=${var.project_id}&supportedpurview=project)
+- Check [GCP CloudRun metrics](https://console.cloud.google.com/run/detail/${local.default_region}/${data.google_cloud_run_service.cr_data.name}/metrics?${var.project_id}&supportedpurview=project)
+- Check [GCP Logs](https://console.cloud.google.com/run/detail/${local.default_region}/${data.google_cloud_run_service.cr_data.name}/logs?project=${var.project_id}&supportedpurview=project)
 
 ## Resolution
 
 - Check the [GCP Alerting Dashboard](https://console.cloud.google.com/monitoring/alerting?project=${var.project_id}&supportedpurview=project) to see if incident is still open or has self-healed
-- If issue persists consider reverting to previous [CloudRun Revision](https://console.cloud.google.com/run/detail/europe-west1/${data.google_cloud_run_service.cr_data.name}/revisions?project=${var.project_id}&supportedpurview=project)
+- If issue persists consider reverting to previous [CloudRun Revision](https://console.cloud.google.com/run/detail/${local.default_region}/${data.google_cloud_run_service.cr_data.name}/revisions?project=${var.project_id}&supportedpurview=project)
 
 EOT
     mime_type = "text/markdown"
